@@ -1,0 +1,14 @@
+.env
+/storage/uploads/*
+/storage/cache/*
+/storage/logs/*
+/storage/sessions/*
+/storage/installed.lock
+/themes/uploaded/*
+!/storage/uploads/.gitkeep
+!/storage/cache/.gitkeep
+!/storage/logs/.gitkeep
+!/storage/sessions/.gitkeep
+!/themes/uploaded/.gitkeep
+Thumbs.db
+desktop.ini
