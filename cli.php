@@ -13,6 +13,7 @@ require __DIR__ . '/app/bootstrap.php';
 $commands = [
     'migrate' => \App\Console\MigrateCommand::class,
     'migrate:status' => \App\Console\MigrateStatusCommand::class,
+    'seed' => \App\Console\SeedCommand::class,
     'make:admin' => \App\Console\MakeAdminCommand::class,
     'key:generate' => \App\Console\KeyGenerateCommand::class,
 ];
