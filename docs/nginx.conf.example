@@ -1,0 +1,32 @@
+# OpenIntranet — nginx server block (document root must be the public/ dir)
+
+server {
+    listen 80;
+    server_name intranet.example.com;
+
+    root /var/www/openintranet/public;
+    index index.php;
+
+    # Deny dotfiles
+    location ~ /\. {
+        deny all;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+    }
+
+    # Static assets: long cache (files are cache-busted via ?v=)
+    location /assets/ {
+        expires 7d;
+        add_header Cache-Control "public";
+    }
+
+    client_max_body_size 25m;
+}

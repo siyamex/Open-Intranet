@@ -1,0 +1,26 @@
+# OpenIntranet root .htaccess — for shared hosts / XAMPP where the document
+# root is the project directory instead of public/. Routes everything into
+# public/ and hard-denies the application internals.
+
+Options -Indexes
+
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+<FilesMatch "^(cli\.php|CLAUDE\.md|intranet-prompt-pack\.md|composer\.(json|lock))$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Never serve application internals
+    RewriteRule ^(app|config|database|storage|themes|docs|\.git)(/.*)?$ - [F,L]
+
+    # Requests already aimed at public/ are handled by public/.htaccess
+    RewriteRule ^public(/.*)?$ - [L]
+
+    # Everything else is served from public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

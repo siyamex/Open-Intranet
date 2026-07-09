@@ -1,0 +1,92 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Core\Config;
+use App\Core\Csrf;
+use App\Core\Flash;
+use App\Core\Router;
+use App\Core\View;
+
+/**
+ * Escape a string for HTML output.
+ */
+function e(string|int|float|null $value): string
+{
+    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+}
+
+function config(string $key, mixed $default = null): mixed
+{
+    return Config::get($key, $default);
+}
+
+function env(string $key, mixed $default = null): mixed
+{
+    return Config::env($key, $default);
+}
+
+/**
+ * Absolute URL for an app path, based on APP_URL.
+ */
+function base_url(string $path = ''): string
+{
+    $base = rtrim((string) Config::env('APP_URL', ''), '/');
+    return $base . '/' . ltrim($path, '/');
+}
+
+/**
+ * Absolute URL for a named route.
+ */
+function url(string $name, array $params = []): string
+{
+    return Router::instance()->route($name, $params);
+}
+
+/**
+ * Asset URL with filemtime cache busting.
+ */
+function asset(string $path): string
+{
+    $path = ltrim($path, '/');
+    $file = BASE_PATH . '/public/assets/' . $path;
+    $version = is_file($file) ? (string) filemtime($file) : '0';
+    return base_url('assets/' . $path) . '?v=' . $version;
+}
+
+function redirect(string $to, int $status = 302): never
+{
+    if (!preg_match('#^https?://#i', $to)) {
+        $to = base_url($to);
+    }
+    header('Location: ' . $to, true, $status);
+    exit;
+}
+
+function old(string $key, mixed $default = ''): mixed
+{
+    return Flash::old($key, $default);
+}
+
+function flash(string $type, string $message): void
+{
+    Flash::set($type, $message);
+}
+
+function csrf_token(): string
+{
+    return Csrf::token();
+}
+
+function csrf_field(): string
+{
+    return Csrf::field();
+}
+
+/**
+ * Render and echo a view partial.
+ */
+function partial(string $view, array $data = []): void
+{
+    echo View::fetch($view, $data);
+}
