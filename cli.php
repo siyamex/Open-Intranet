@@ -16,6 +16,7 @@ $commands = [
     'seed' => \App\Console\SeedCommand::class,
     'make:admin' => \App\Console\MakeAdminCommand::class,
     'key:generate' => \App\Console\KeyGenerateCommand::class,
+    'svg:test' => \App\Console\SvgTestCommand::class,
 ];
 
 $name = $argv[1] ?? 'help';

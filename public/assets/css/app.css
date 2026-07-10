@@ -570,6 +570,78 @@ body.sidebar-collapsed .main { margin-left: 64px; }
     body.sidebar-collapsed .sidebar .sidebar-label { display: inline; }
 }
 
+/* ---- Home sections + quick link tiles ---- */
+.home-section { margin-bottom: 2rem; }
+.home-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.9rem;
+}
+.home-section-head h2 { display: flex; align-items: center; gap: 0.5rem; margin: 0; }
+
+.ql-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+    gap: 0.9rem;
+}
+.ql-tile {
+    position: relative;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1rem 0.6rem 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    transition: box-shadow 0.12s, transform 0.12s;
+}
+.ql-tile:hover { box-shadow: var(--shadow-2); transform: translateY(-2px); }
+.ql-tile.dragging { opacity: 0.4; }
+.ql-tile.inactive { opacity: 0.5; }
+.ql-link { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; color: var(--color-text); min-width: 0; width: 100%; }
+.ql-link:hover { text-decoration: none; }
+.ql-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+.ql-icon .ql-svg { width: 26px; height: 26px; }
+.ql-icon img { width: 30px; height: 30px; object-fit: contain; }
+.ql-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+.ql-pin {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: none;
+    border: none;
+    color: var(--color-border);
+    cursor: pointer;
+    padding: 2px;
+}
+.ql-pin .icon { width: 16px; height: 16px; }
+.ql-pin:hover { color: var(--color-warning); }
+.ql-pin.pinned { color: var(--color-warning); }
+.ql-pin.pinned .icon { fill: var(--color-warning); }
+.ql-spark { max-width: 100%; }
+
+.palette-row { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; }
+.swatch { width: 26px; height: 26px; border-radius: 6px; border: 2px solid var(--color-border); cursor: pointer; }
+.swatch:hover { border-color: var(--color-text); }
+
 /* ---- Tabs ---- */
 .tabs { display: flex; gap: 0.25rem; margin-bottom: 1rem; border-bottom: 1px solid var(--color-border); flex-wrap: wrap; }
 .tab {

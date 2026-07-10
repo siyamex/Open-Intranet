@@ -1,8 +1,18 @@
+<?php use App\Core\View; ?>
 <div class="page-head">
-    <h1>Welcome to <?= e(config('app.name')) ?></h1>
-    <p class="text-muted">Your company portal. Dashboard modules will appear here.</p>
+    <h1>Welcome back, <?= e(explode(' ', trim((string) \App\Core\Auth::user()['name']))[0]) ?> 👋</h1>
 </div>
-<div class="card">
-    <h2>Foundation is running</h2>
-    <p>Router, views, sessions and the database layer are wired up. Continue the build to add authentication, news, documents and more.</p>
-</div>
+
+<?php foreach ($sections as $section): ?>
+    <?php if ($section === 'quick_links' && isset($quickLinks)): ?>
+        <?php partial('partials/home/quick-links', ['quickLinks' => $quickLinks]); ?>
+    <?php elseif ($section === 'news' && isset($newsPosts)): ?>
+        <?php partial('partials/home/news', ['newsPosts' => $newsPosts, 'pinnedPosts' => $pinnedPosts ?? []]); ?>
+    <?php elseif ($section === 'gazette' && isset($gazetteDocs)): ?>
+        <?php partial('partials/home/gazette', ['gazetteDocs' => $gazetteDocs]); ?>
+    <?php endif; ?>
+<?php endforeach; ?>
+
+<?php View::start('scripts'); ?>
+<script src="<?= e(asset('js/quick-links.js')) ?>"></script>
+<?php View::end(); ?>

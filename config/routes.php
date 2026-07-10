@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use App\Controllers\Admin\MenuController;
+use App\Controllers\Admin\QuickLinkController as AdminQuickLinkController;
 use App\Controllers\Admin\RoleController;
+use App\Controllers\QuickLinkController;
 use App\Controllers\Admin\SsoProviderController;
 use App\Controllers\NotificationController;
 use App\Controllers\SearchController;
@@ -54,6 +56,10 @@ return static function (Router $r): void {
         $r->get('/search', [SearchController::class, 'index'], 'search');
         $r->get('/notifications/recent', [NotificationController::class, 'recent'], 'notifications.recent');
         $r->post('/notifications/read', [NotificationController::class, 'markRead'], 'notifications.read');
+        $r->get('/qlicons/{file}', [MediaController::class, 'quickLinkIcon'], 'qlicon');
+        $r->post('/quick-links/{id}/click', [QuickLinkController::class, 'click'], 'quick-links.click');
+        $r->post('/quick-links/{id}/pin', [QuickLinkController::class, 'pin'], 'quick-links.pin');
+        $r->post('/quick-links/order', [QuickLinkController::class, 'order'], 'quick-links.order');
     });
 
     // Admin
@@ -92,6 +98,14 @@ return static function (Router $r): void {
             $r->post('/roles', [RoleController::class, 'store'], 'admin.roles.store');
             $r->post('/roles/matrix', [RoleController::class, 'saveMatrix'], 'admin.roles.matrix');
             $r->delete('/roles/{id}', [RoleController::class, 'destroy'], 'admin.roles.destroy');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':links.manage']], static function (Router $r): void {
+            $r->get('/quick-links', [AdminQuickLinkController::class, 'index'], 'admin.quick-links');
+            $r->post('/quick-links', [AdminQuickLinkController::class, 'store'], 'admin.quick-links.store');
+            $r->post('/quick-links/reorder', [AdminQuickLinkController::class, 'reorder'], 'admin.quick-links.reorder');
+            $r->put('/quick-links/{id}', [AdminQuickLinkController::class, 'update'], 'admin.quick-links.update');
+            $r->delete('/quick-links/{id}', [AdminQuickLinkController::class, 'destroy'], 'admin.quick-links.destroy');
         });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':menus.manage']], static function (Router $r): void {

@@ -22,33 +22,35 @@ final class View
 
     /**
      * Render a view inside a layout and echo it. Pass $layout = null for a bare view.
+     * Internal variables are __-prefixed so view data keys (e.g. 'view',
+     * 'data', 'layout') are never shadowed by extract(EXTR_SKIP).
      */
-    public static function render(string $view, array $data = [], ?string $layout = 'app'): void
+    public static function render(string $__view, array $__data = [], ?string $__layout = 'app'): void
     {
-        $data = array_merge(self::$shared, $data);
-        $content = self::fetch($view, $data);
-        if ($layout === null) {
+        $__data = array_merge(self::$shared, $__data);
+        $content = self::fetch($__view, $__data);
+        if ($__layout === null) {
             echo $content;
             return;
         }
-        $layoutFile = BASE_PATH . '/app/Views/layouts/' . $layout . '.php';
-        if (!is_file($layoutFile)) {
-            throw new \RuntimeException("Layout not found: {$layout}");
+        $__layoutFile = BASE_PATH . '/app/Views/layouts/' . $__layout . '.php';
+        if (!is_file($__layoutFile)) {
+            throw new \RuntimeException("Layout not found: {$__layout}");
         }
-        extract($data, EXTR_SKIP);
-        include $layoutFile;
+        extract($__data, EXTR_SKIP);
+        include $__layoutFile;
     }
 
     /**
      * Render a view file to a string (no layout).
      */
-    public static function fetch(string $view, array $data = []): string
+    public static function fetch(string $__view, array $__data = []): string
     {
-        $__file = BASE_PATH . '/app/Views/' . $view . '.php';
+        $__file = BASE_PATH . '/app/Views/' . $__view . '.php';
         if (!is_file($__file)) {
-            throw new \RuntimeException("View not found: {$view}");
+            throw new \RuntimeException("View not found: {$__view}");
         }
-        extract($data, EXTR_SKIP);
+        extract($__data, EXTR_SKIP);
         ob_start();
         include $__file;
         return (string) ob_get_clean();

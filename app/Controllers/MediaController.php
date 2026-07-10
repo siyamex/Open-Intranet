@@ -34,6 +34,25 @@ final class MediaController
         exit;
     }
 
+    public function quickLinkIcon(string $file): void
+    {
+        if (!preg_match('/^[a-f0-9]{24}\.(svg|png)$/', $file)) {
+            $this->notFound();
+        }
+        $path = BASE_PATH . '/storage/uploads/qlicons/' . $file;
+        if (!is_file($path)) {
+            $this->notFound();
+        }
+        $mime = str_ends_with($file, '.svg') ? 'image/svg+xml' : 'image/png';
+        header('Content-Type: ' . $mime);
+        header('Content-Length: ' . (string) filesize($path));
+        header('X-Content-Type-Options: nosniff');
+        header('Content-Security-Policy: default-src \'none\'; style-src \'unsafe-inline\'');
+        header('Cache-Control: private, max-age=86400');
+        readfile($path);
+        exit;
+    }
+
     private function notFound(): never
     {
         http_response_code(404);
