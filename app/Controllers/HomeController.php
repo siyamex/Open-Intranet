@@ -32,7 +32,22 @@ final class HomeController
                 ));
                 $data['newsPosts'] = array_slice($data['newsPosts'], 0, $count);
             }
-            // gazette section attaches its data once the documents module exists
+            elseif ($section === 'gazette') {
+                $count = (int) Settings::get('gazette_dashboard_count', 5);
+                $docs = DB::fetchAll(
+                    'SELECT d.*, c.visible_to AS category_visible_to
+                     FROM documents d
+                     LEFT JOIN doc_categories c ON c.id = d.category_id
+                     WHERE d.is_gazette = 1 AND d.parent_doc_id IS NULL
+                     ORDER BY d.published_at DESC, d.created_at DESC
+                     LIMIT ' . ($count + 10)
+                );
+                $docs = array_values(array_filter($docs, static function (array $d): bool {
+                    return \App\Core\Visibility::allowed($d['visible_to'])
+                        && \App\Core\Visibility::allowed($d['category_visible_to']);
+                }));
+                $data['gazetteDocs'] = array_slice($docs, 0, $count);
+            }
         }
         View::render('pages/home', $data);
     }

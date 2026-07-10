@@ -91,6 +91,20 @@ function partial(string $view, array $data = []): void
     echo View::fetch($view, $data);
 }
 
+function format_bytes(int $bytes): string
+{
+    if ($bytes >= 1073741824) {
+        return round($bytes / 1073741824, 1) . ' GB';
+    }
+    if ($bytes >= 1048576) {
+        return round($bytes / 1048576, 1) . ' MB';
+    }
+    if ($bytes >= 1024) {
+        return round($bytes / 1024) . ' KB';
+    }
+    return $bytes . ' B';
+}
+
 /**
  * Inline a self-hosted SVG icon (colors follow currentColor).
  */

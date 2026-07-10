@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Controllers\Admin\MenuController;
 use App\Controllers\Admin\NewsController as AdminNewsController;
+use App\Controllers\DocumentController;
+use App\Controllers\FileController;
 use App\Controllers\Admin\QuickLinkController as AdminQuickLinkController;
 use App\Controllers\NewsController;
 use App\Controllers\Admin\RoleController;
@@ -67,6 +70,8 @@ return static function (Router $r): void {
         $r->post('/news/{slug}/comments', [NewsController::class, 'comment'], 'news.comment');
         $r->post('/news/{slug}/react', [NewsController::class, 'react'], 'news.react');
         $r->get('/news-media/{file}', [MediaController::class, 'newsMedia'], 'news.media');
+        $r->get('/documents', [DocumentController::class, 'index'], 'documents.index');
+        $r->get('/files/{uuid}', [FileController::class, 'serve'], 'files.serve');
     });
 
     // Admin
@@ -121,6 +126,22 @@ return static function (Router $r): void {
         $r->group(['middleware' => [PermissionMiddleware::class . ':news.publish']], static function (Router $r): void {
             $r->post('/news/{id}/archive', [AdminNewsController::class, 'archive'], 'admin.news.archive');
             $r->post('/news/{id}/pin', [AdminNewsController::class, 'pin'], 'admin.news.pin');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':docs.upload']], static function (Router $r): void {
+            $r->get('/documents', [AdminDocumentController::class, 'index'], 'admin.documents');
+            $r->post('/documents', [AdminDocumentController::class, 'store'], 'admin.documents.store');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':docs.manage']], static function (Router $r): void {
+            $r->post('/documents/bulk', [AdminDocumentController::class, 'bulk'], 'admin.documents.bulk');
+            $r->put('/documents/{id}', [AdminDocumentController::class, 'update'], 'admin.documents.update');
+            $r->delete('/documents/{id}', [AdminDocumentController::class, 'destroy'], 'admin.documents.destroy');
+            $r->get('/documents/{id}/versions', [AdminDocumentController::class, 'versions'], 'admin.documents.versions');
+            $r->post('/documents/{id}/version', [AdminDocumentController::class, 'newVersion'], 'admin.documents.version');
+            $r->post('/documents/versions/{id}/restore', [AdminDocumentController::class, 'restore'], 'admin.documents.restore');
+            $r->post('/doc-categories', [AdminDocumentController::class, 'storeCategory'], 'admin.doc-categories.store');
+            $r->delete('/doc-categories/{id}', [AdminDocumentController::class, 'destroyCategory'], 'admin.doc-categories.destroy');
         });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':links.manage']], static function (Router $r): void {
