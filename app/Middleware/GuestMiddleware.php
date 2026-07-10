@@ -8,7 +8,7 @@ use App\Core\Auth;
 
 final class GuestMiddleware
 {
-    public function handle(): void
+    public function handle(?string $param = null): void
     {
         if (Auth::check()) {
             redirect('/');

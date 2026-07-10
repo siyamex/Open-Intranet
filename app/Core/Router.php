@@ -155,7 +155,11 @@ final class Router
                 (new CsrfMiddleware())->handle();
             }
             foreach (array_values(array_unique($route['middleware'])) as $middlewareClass) {
-                (new $middlewareClass())->handle();
+                $middlewareParam = null;
+                if (str_contains($middlewareClass, ':')) {
+                    [$middlewareClass, $middlewareParam] = explode(':', $middlewareClass, 2);
+                }
+                (new $middlewareClass())->handle($middlewareParam);
             }
             $this->call($route['handler'], $params);
             return;

@@ -8,7 +8,7 @@ use App\Core\Auth;
 
 final class AuthMiddleware
 {
-    public function handle(): void
+    public function handle(?string $param = null): void
     {
         if (!Auth::check()) {
             if (strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET') {

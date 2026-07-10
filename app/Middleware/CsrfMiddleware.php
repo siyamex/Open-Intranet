@@ -9,7 +9,7 @@ use App\Core\View;
 
 final class CsrfMiddleware
 {
-    public function handle(): void
+    public function handle(?string $param = null): void
     {
         $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
         if (!in_array($method, ['POST', 'PUT', 'DELETE', 'PATCH'], true)) {

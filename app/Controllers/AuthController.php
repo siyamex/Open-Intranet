@@ -20,6 +20,15 @@ final class AuthController
         $providers = DB::fetchAll(
             'SELECT id, name, slug, icon, button_color FROM sso_providers WHERE enabled = 1 ORDER BY sort_order, id'
         );
+        // Optional auto-redirect straight to a provider (?local=1 bypasses it).
+        $auto = (string) (Settings::get('sso_auto_redirect') ?? '');
+        if ($auto !== '' && empty($_GET['local'])) {
+            foreach ($providers as $p) {
+                if ($p['slug'] === $auto) {
+                    redirect('auth/' . $auto . '/redirect');
+                }
+            }
+        }
         View::render('auth/login', [
             'title' => 'Sign in',
             'providers' => $providers,
