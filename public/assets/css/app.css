@@ -244,6 +244,101 @@ h3 { font-size: 1.05rem; }
     color: var(--color-text-muted);
 }
 
+/* ---- Avatars ---- */
+.avatar {
+    border-radius: 50%;
+    object-fit: cover;
+    display: inline-block;
+    vertical-align: middle;
+    background: var(--color-surface-2);
+    flex-shrink: 0;
+}
+.avatar-initials {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary);
+    color: var(--color-primary-contrast);
+    font-weight: 700;
+}
+
+/* ---- Filter bars, grids, pagination ---- */
+.filter-bar {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+.filter-bar .form-control { width: auto; min-width: 140px; }
+.filter-bar input[type="search"] { min-width: 220px; }
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0 1rem;
+}
+.checkbox-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+.pagination { display: flex; gap: 0.25rem; margin-top: 1rem; flex-wrap: wrap; }
+.page-link {
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+.page-link.active {
+    background: var(--color-primary);
+    color: var(--color-primary-contrast);
+    border-color: var(--color-primary);
+}
+.page-link:hover { text-decoration: none; }
+
+.matrix-table th.matrix-role { text-align: center; min-width: 110px; }
+
+/* ---- Searchable select ---- */
+.ss-wrap { position: relative; }
+.ss-display { text-align: left; cursor: pointer; }
+.ss-panel {
+    position: absolute;
+    z-index: 60;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-2);
+    padding: 0.5rem;
+}
+.ss-list {
+    list-style: none;
+    margin: 0.4rem 0 0;
+    padding: 0;
+    max-height: 220px;
+    overflow-y: auto;
+}
+.ss-list li { padding: 0.35rem 0.5rem; border-radius: var(--radius-sm); cursor: pointer; }
+.ss-list li:hover, .ss-list li.active { background: var(--color-surface-2); }
+
+/* ---- Impersonation banner ---- */
+.impersonation-banner {
+    background: var(--color-warning);
+    color: #fff;
+    padding: 0.45rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    font-size: 0.92rem;
+    position: sticky;
+    top: 0;
+    z-index: 60;
+}
+.impersonation-banner form { display: inline; }
+.impersonation-banner .btn { background: rgba(255, 255, 255, 0.18); color: #fff; border-color: rgba(255, 255, 255, 0.5); }
+
 /* ---- Error pages ---- */
 .error-body {
     display: flex;

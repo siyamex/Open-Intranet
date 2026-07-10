@@ -2,11 +2,16 @@
 
 declare(strict_types=1);
 
+use App\Controllers\Admin\RoleController;
 use App\Controllers\Admin\SsoProviderController;
+use App\Controllers\Admin\UserController;
+use App\Controllers\Admin\UserImportController;
 use App\Controllers\AuthController;
 use App\Controllers\HomeController;
 use App\Controllers\MediaController;
 use App\Controllers\PasswordController;
+use App\Controllers\PeopleController;
+use App\Controllers\ProfileController;
 use App\Controllers\ProfileSecurityController;
 use App\Controllers\SsoController;
 use App\Core\Router;
@@ -39,6 +44,10 @@ return static function (Router $r): void {
         $r->get('/profile/security', [ProfileSecurityController::class, 'index'], 'profile.security');
         $r->post('/profile/security/unlink/{id}', [ProfileSecurityController::class, 'unlink'], 'profile.security.unlink');
         $r->get('/avatars/{file}', [MediaController::class, 'avatar'], 'avatar');
+        $r->get('/profile', [ProfileController::class, 'edit'], 'profile');
+        $r->post('/profile', [ProfileController::class, 'update'], 'profile.update');
+        $r->get('/people/{id}', [PeopleController::class, 'show'], 'people.show');
+        $r->post('/impersonate/stop', [UserController::class, 'stopImpersonate'], 'impersonate.stop');
     });
 
     // Admin
@@ -54,6 +63,29 @@ return static function (Router $r): void {
             $r->delete('/sso/{id}', [SsoProviderController::class, 'destroy'], 'admin.sso.destroy');
             $r->post('/sso/{id}/toggle', [SsoProviderController::class, 'toggle'], 'admin.sso.toggle');
             $r->get('/sso/{id}/test', [SsoProviderController::class, 'test'], 'admin.sso.test');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':users.manage']], static function (Router $r): void {
+            $r->get('/users', [UserController::class, 'index'], 'admin.users');
+            $r->get('/users/create', [UserController::class, 'create'], 'admin.users.create');
+            $r->post('/users', [UserController::class, 'store'], 'admin.users.store');
+            $r->get('/users/import', [UserImportController::class, 'form'], 'admin.users.import');
+            $r->get('/users/import/template', [UserImportController::class, 'template'], 'admin.users.import.template');
+            $r->post('/users/import/preview', [UserImportController::class, 'preview'], 'admin.users.import.preview');
+            $r->post('/users/import/commit', [UserImportController::class, 'commit'], 'admin.users.import.commit');
+            $r->get('/users/{id}/edit', [UserController::class, 'edit'], 'admin.users.edit');
+            $r->put('/users/{id}', [UserController::class, 'update'], 'admin.users.update');
+            $r->delete('/users/{id}', [UserController::class, 'destroy'], 'admin.users.destroy');
+            $r->post('/users/{id}/toggle', [UserController::class, 'toggleStatus'], 'admin.users.toggle');
+            $r->post('/users/{id}/force-reset', [UserController::class, 'forceReset'], 'admin.users.force-reset');
+            $r->post('/users/{id}/impersonate', [UserController::class, 'impersonate'], 'admin.users.impersonate');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':roles.manage']], static function (Router $r): void {
+            $r->get('/roles', [RoleController::class, 'index'], 'admin.roles');
+            $r->post('/roles', [RoleController::class, 'store'], 'admin.roles.store');
+            $r->post('/roles/matrix', [RoleController::class, 'saveMatrix'], 'admin.roles.matrix');
+            $r->delete('/roles/{id}', [RoleController::class, 'destroy'], 'admin.roles.destroy');
         });
     });
 };

@@ -16,6 +16,7 @@ $authUser = Auth::user();
 <?= View::section('styles') ?>
 </head>
 <body>
+<?php partial('partials/impersonation'); ?>
 <header class="topbar">
     <div class="topbar-inner">
         <a class="brand" href="<?= e(url('home')) ?>"><?= e($siteName) ?></a>

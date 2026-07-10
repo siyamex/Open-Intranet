@@ -9,6 +9,7 @@
 <?= View::section('styles') ?>
 </head>
 <body>
+<?php partial('partials/impersonation'); ?>
 <header class="topbar topbar-admin">
     <div class="topbar-inner">
         <a class="brand" href="<?= e(url('home')) ?>"><?= e(config('app.name')) ?></a>
