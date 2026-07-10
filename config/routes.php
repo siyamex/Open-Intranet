@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use App\Controllers\Admin\MenuController;
+use App\Controllers\Admin\NewsController as AdminNewsController;
 use App\Controllers\Admin\QuickLinkController as AdminQuickLinkController;
+use App\Controllers\NewsController;
 use App\Controllers\Admin\RoleController;
 use App\Controllers\QuickLinkController;
 use App\Controllers\Admin\SsoProviderController;
@@ -60,6 +62,11 @@ return static function (Router $r): void {
         $r->post('/quick-links/{id}/click', [QuickLinkController::class, 'click'], 'quick-links.click');
         $r->post('/quick-links/{id}/pin', [QuickLinkController::class, 'pin'], 'quick-links.pin');
         $r->post('/quick-links/order', [QuickLinkController::class, 'order'], 'quick-links.order');
+        $r->get('/news', [NewsController::class, 'index'], 'news.index');
+        $r->get('/news/{slug}', [NewsController::class, 'show'], 'news.show');
+        $r->post('/news/{slug}/comments', [NewsController::class, 'comment'], 'news.comment');
+        $r->post('/news/{slug}/react', [NewsController::class, 'react'], 'news.react');
+        $r->get('/news-media/{file}', [MediaController::class, 'newsMedia'], 'news.media');
     });
 
     // Admin
@@ -98,6 +105,22 @@ return static function (Router $r): void {
             $r->post('/roles', [RoleController::class, 'store'], 'admin.roles.store');
             $r->post('/roles/matrix', [RoleController::class, 'saveMatrix'], 'admin.roles.matrix');
             $r->delete('/roles/{id}', [RoleController::class, 'destroy'], 'admin.roles.destroy');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':news.create']], static function (Router $r): void {
+            $r->get('/news', [AdminNewsController::class, 'index'], 'admin.news');
+            $r->get('/news/create', [AdminNewsController::class, 'create'], 'admin.news.create');
+            $r->post('/news', [AdminNewsController::class, 'store'], 'admin.news.store');
+            $r->post('/news/upload-image', [AdminNewsController::class, 'uploadImage'], 'admin.news.upload-image');
+            $r->post('/news/categories', [AdminNewsController::class, 'storeCategory'], 'admin.news.category.store');
+            $r->get('/news/{id}/edit', [AdminNewsController::class, 'edit'], 'admin.news.edit');
+            $r->put('/news/{id}', [AdminNewsController::class, 'update'], 'admin.news.update');
+            $r->delete('/news/{id}', [AdminNewsController::class, 'destroy'], 'admin.news.destroy');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':news.publish']], static function (Router $r): void {
+            $r->post('/news/{id}/archive', [AdminNewsController::class, 'archive'], 'admin.news.archive');
+            $r->post('/news/{id}/pin', [AdminNewsController::class, 'pin'], 'admin.news.pin');
         });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':links.manage']], static function (Router $r): void {

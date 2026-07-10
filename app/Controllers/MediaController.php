@@ -34,6 +34,23 @@ final class MediaController
         exit;
     }
 
+    public function newsMedia(string $file): void
+    {
+        if (!preg_match('/^[a-f0-9]{32}\.jpg$/', $file)) {
+            $this->notFound();
+        }
+        $path = BASE_PATH . '/storage/uploads/news/' . $file;
+        if (!is_file($path)) {
+            $this->notFound();
+        }
+        header('Content-Type: image/jpeg');
+        header('Content-Length: ' . (string) filesize($path));
+        header('X-Content-Type-Options: nosniff');
+        header('Cache-Control: private, max-age=86400');
+        readfile($path);
+        exit;
+    }
+
     public function quickLinkIcon(string $file): void
     {
         if (!preg_match('/^[a-f0-9]{24}\.(svg|png)$/', $file)) {

@@ -17,6 +17,7 @@ $commands = [
     'make:admin' => \App\Console\MakeAdminCommand::class,
     'key:generate' => \App\Console\KeyGenerateCommand::class,
     'svg:test' => \App\Console\SvgTestCommand::class,
+    'publish:due' => \App\Console\PublishDueCommand::class,
 ];
 
 $name = $argv[1] ?? 'help';
