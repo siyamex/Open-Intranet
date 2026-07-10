@@ -642,6 +642,43 @@ body.sidebar-collapsed .main { margin-left: 64px; }
 .swatch { width: 26px; height: 26px; border-radius: 6px; border: 2px solid var(--color-border); cursor: pointer; }
 .swatch:hover { border-color: var(--color-text); }
 
+/* ---- Org chart ---- */
+.oc-toolbar { align-items: center; }
+#oc-hierarchy { position: relative; }
+.oc-canvas-wrap { position: relative; padding: 0.5rem; }
+#oc-svg { width: 100%; height: 72vh; cursor: grab; display: block; }
+#oc-svg:active { cursor: grabbing; }
+.oc-node { cursor: pointer; }
+.oc-node.dimmed { opacity: 0.25; }
+.oc-toggle { cursor: pointer; }
+.oc-controls {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 5;
+    display: flex;
+    gap: 0.3rem;
+}
+.oc-panel {
+    position: absolute;
+    top: 60px;
+    right: 12px;
+    width: 260px;
+    z-index: 6;
+    box-shadow: var(--shadow-2);
+}
+.oc-panel .toast-close { position: absolute; top: 8px; right: 10px; }
+
+@media print {
+    .navbar, .sidebar, .sidebar-backdrop, .oc-toolbar, .oc-controls, .breadcrumbs, .toast-stack, .impersonation-banner { display: none !important; }
+    .main { margin-left: 0 !important; padding: 0 !important; }
+    .oc-view { display: block !important; }
+    #oc-hierarchy, #oc-departments { display: none !important; }
+    #oc-flat { display: block !important; }
+    #oc-flat[hidden] { display: block !important; }
+    .card { border: none; box-shadow: none; }
+}
+
 /* ---- Directory ---- */
 .az-bar { display: flex; gap: 2px; flex-wrap: wrap; margin-bottom: 1rem; }
 .az-letter {

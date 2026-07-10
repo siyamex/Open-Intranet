@@ -10,6 +10,8 @@ use App\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Controllers\Admin\ThemeController as AdminThemeController;
 use App\Middleware\ModuleMiddleware;
 use App\Controllers\Admin\NewsController as AdminNewsController;
+use App\Controllers\Admin\OrgQualityController;
+use App\Controllers\OrgChartController;
 use App\Controllers\DirectoryController;
 use App\Controllers\DocumentController;
 use App\Controllers\FileController;
@@ -96,6 +98,10 @@ return static function (Router $r): void {
             $r->get('/directory/department/{id}', [DirectoryController::class, 'department'], 'directory.department');
             $r->get('/people/{id}/vcard', [DirectoryController::class, 'vcard'], 'people.vcard');
         });
+        $r->group(['middleware' => [ModuleMiddleware::class . ':org_chart']], static function (Router $r): void {
+            $r->get('/org-chart', [OrgChartController::class, 'index'], 'orgchart.index');
+            $r->get('/api/org-chart', [OrgChartController::class, 'api'], 'orgchart.api');
+        });
         $r->post('/profile/skills', [ProfileController::class, 'addSkill'], 'profile.skills.add');
         $r->post('/profile/skills/remove', [ProfileController::class, 'removeSkill'], 'profile.skills.remove');
     });
@@ -141,6 +147,7 @@ return static function (Router $r): void {
             $r->post('/users/{id}/toggle', [UserController::class, 'toggleStatus'], 'admin.users.toggle');
             $r->post('/users/{id}/force-reset', [UserController::class, 'forceReset'], 'admin.users.force-reset');
             $r->post('/users/{id}/impersonate', [UserController::class, 'impersonate'], 'admin.users.impersonate');
+            $r->get('/org-quality', [OrgQualityController::class, 'index'], 'admin.org-quality');
         });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':roles.manage']], static function (Router $r): void {
