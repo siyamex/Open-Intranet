@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Theme preview</title>
 <?php partial('partials/head-assets'); ?>
+<?php if (!empty($draftCss)): ?>
+<style><?= $draftCss /* compiled by ThemeService, values sanitized */ ?></style>
+<?php endif; ?>
 <style>
     body { padding: 0; }
     .tp-section { padding: 1rem; }

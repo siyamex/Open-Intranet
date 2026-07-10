@@ -48,8 +48,10 @@ return static function (Router $r): void {
 
     $r->post('/logout', [AuthController::class, 'logout'], 'logout');
 
-    // Compiled theme stylesheet (public — the login page needs it)
+    // Compiled theme stylesheet + uploaded theme assets (public — login page)
     $r->get('/theme.css', [ThemeCssController::class, 'css'], 'theme.css');
+    $r->get('/theme-assets/{slug}/{file}', [MediaController::class, 'themeAsset'], 'theme.asset');
+    $r->get('/theme-assets/{slug}/{sub}/{file}', [MediaController::class, 'themeAssetSub'], 'theme.asset.sub');
 
     // SSO flow (works for guests and for logged-in users linking accounts)
     $r->get('/auth/{slug}/redirect', [SsoController::class, 'redirect'], 'sso.redirect');
@@ -188,6 +190,8 @@ return static function (Router $r): void {
             $r->post('/themes/{id}/activate', [AdminThemeController::class, 'activate'], 'admin.themes.activate');
             $r->delete('/themes/{id}', [AdminThemeController::class, 'destroy'], 'admin.themes.destroy');
             $r->get('/themes/{id}/export', [AdminThemeController::class, 'export'], 'admin.themes.export');
+            $r->post('/themes/install', [AdminThemeController::class, 'install'], 'admin.themes.install');
+            $r->post('/themes/{id}/rollback', [AdminThemeController::class, 'rollback'], 'admin.themes.rollback');
         });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':menus.manage']], static function (Router $r): void {

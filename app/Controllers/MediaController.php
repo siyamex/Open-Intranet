@@ -70,6 +70,43 @@ final class MediaController
         exit;
     }
 
+    /**
+     * Uploaded theme assets (public — themes style the login page too).
+     * Files were finfo-verified and re-encoded/sanitized at install time.
+     */
+    public function themeAssetSub(string $slug, string $sub, string $file): void
+    {
+        $this->themeAsset($slug, $file, $sub);
+    }
+
+    public function themeAsset(string $slug, string $file, string $sub = ''): void
+    {
+        $slug = (string) preg_replace('/[^a-z0-9-]/', '', strtolower($slug));
+        $relative = ($sub !== '' ? $sub . '/' : '') . $file;
+        if ($slug === '' || !preg_match('#^[a-zA-Z0-9_./-]+$#', $relative) || str_contains($relative, '..')) {
+            $this->notFound();
+        }
+        $path = BASE_PATH . '/themes/uploaded/' . $slug . '/assets/' . $relative;
+        $ext = strtolower(pathinfo($relative, PATHINFO_EXTENSION));
+        $mimes = [
+            'png' => 'image/png', 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'webp' => 'image/webp',
+            'gif' => 'image/gif', 'svg' => 'image/svg+xml', 'css' => 'text/css',
+            'woff' => 'font/woff', 'woff2' => 'font/woff2', 'ttf' => 'font/ttf', 'otf' => 'font/otf',
+        ];
+        if (!is_file($path) || !isset($mimes[$ext])) {
+            $this->notFound();
+        }
+        header('Content-Type: ' . $mimes[$ext]);
+        header('Content-Length: ' . (string) filesize($path));
+        header('X-Content-Type-Options: nosniff');
+        if ($ext === 'svg') {
+            header("Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'");
+        }
+        header('Cache-Control: public, max-age=604800');
+        readfile($path);
+        exit;
+    }
+
     private function notFound(): never
     {
         http_response_code(404);

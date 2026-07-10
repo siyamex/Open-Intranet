@@ -137,10 +137,56 @@ final class ThemeController
 
     /**
      * Sample page rendered inside the editor's live-preview iframe.
+     * ?theme={id} previews a non-active theme (draft link before activating).
      */
     public function preview(): void
     {
-        View::render('pages/theme-preview', ['title' => 'Theme preview'], null);
+        $draftCss = null;
+        if (!empty($_GET['theme'])) {
+            $draft = DB::fetch('SELECT * FROM themes WHERE id = ?', [(int) $_GET['theme']]);
+            if ($draft !== null) {
+                $draftCss = ThemeService::compile($draft);
+            }
+        }
+        View::render('pages/theme-preview', ['title' => 'Theme preview', 'draftCss' => $draftCss], null);
+    }
+
+    /**
+     * ZIP theme install (spec in THEMES.md).
+     */
+    public function install(): void
+    {
+        $file = $_FILES['theme_zip'] ?? null;
+        if (!is_array($file) || ($file['error'] ?? 1) !== UPLOAD_ERR_OK) {
+            flash('error', 'Please choose a theme .zip file.');
+            redirect('admin/themes');
+        }
+        if ((int) $file['size'] > \App\Core\ThemeInstaller::MAX_ZIP_BYTES) {
+            flash('error', 'Theme archives may be at most 10 MB.');
+            redirect('admin/themes');
+        }
+        $report = \App\Core\ThemeInstaller::install((string) $file['tmp_name']);
+        $_SESSION['theme_install_report'] = $report;
+        if ($report['ok']) {
+            Audit::log('theme.installed', 'theme', $report['theme_id'], ['slug' => $report['slug'], 'warnings' => count($report['warnings'])]);
+            flash('success', 'Theme installed — review the install report below, then preview or activate it.');
+        } else {
+            Audit::log('theme.install_rejected', 'theme', null, ['errors' => $report['errors']]);
+            flash('error', 'Theme rejected: ' . implode(' ', $report['errors']));
+        }
+        redirect('admin/themes');
+    }
+
+    public function rollback(string $id): void
+    {
+        $error = \App\Core\ThemeInstaller::rollback((int) $id);
+        if ($error !== null) {
+            flash('error', $error);
+        } else {
+            Audit::log('theme.rolled_back', 'theme', (int) $id);
+            flash('success', 'Theme rolled back to the previous version.');
+        }
+        redirect('admin/themes');
     }
 
     /**
