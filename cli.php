@@ -14,6 +14,7 @@ $commands = [
     'migrate' => \App\Console\MigrateCommand::class,
     'migrate:status' => \App\Console\MigrateStatusCommand::class,
     'seed' => \App\Console\SeedCommand::class,
+    'seed:demo' => \App\Console\SeedDemoCommand::class,
     'make:admin' => \App\Console\MakeAdminCommand::class,
     'key:generate' => \App\Console\KeyGenerateCommand::class,
     'svg:test' => \App\Console\SvgTestCommand::class,

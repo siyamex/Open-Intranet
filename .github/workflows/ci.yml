@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint-and-smoke:
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: openintranet
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-retries=12
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_mysql, curl, openssl, sodium, gd, zip, fileinfo
+
+      - name: php -l across the repository
+        run: |
+          set -e
+          find . -name '*.php' -not -path './storage/*' -print0 \
+            | xargs -0 -n1 -P4 php -l > /dev/null
+          echo "All PHP files lint clean."
+
+      - name: Smoke test (migrate, seed, admin, routes audit, svg sanitizer)
+        run: |
+          set -e
+          cp .env.example .env
+          sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' .env
+          sed -i 's/^DB_USER=.*/DB_USER=root/' .env
+          sed -i 's/^DB_PASS=.*/DB_PASS=root/' .env
+          php cli.php key:generate --write
+          php cli.php migrate
+          php cli.php seed
+          php cli.php make:admin ci@example.com "CiSmokeTest#2026"
+          php cli.php routes:audit
+          php cli.php svg:test
+
+      - name: Boot the app and fetch the login page
+        run: |
+          set -e
+          php -S 127.0.0.1:8000 -t public public/index.php &
+          sleep 2
+          curl -sf http://127.0.0.1:8000/login | grep -q "Sign in"
+          echo "Login page renders."

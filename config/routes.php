@@ -26,6 +26,7 @@ use App\Controllers\Admin\UserController;
 use App\Controllers\Admin\UserImportController;
 use App\Controllers\AuthController;
 use App\Controllers\HomeController;
+use App\Controllers\InstallController;
 use App\Controllers\MediaController;
 use App\Controllers\PasswordController;
 use App\Controllers\PeopleController;
@@ -55,6 +56,10 @@ return static function (Router $r): void {
     });
 
     $r->post('/logout', [AuthController::class, 'logout'], 'logout');
+
+    // First-run installer (404s itself once storage/installed.lock exists)
+    $r->get('/install', [InstallController::class, 'step'], 'install');
+    $r->post('/install', [InstallController::class, 'step'], 'install.post');
 
     // Compiled theme stylesheet + uploaded theme assets (public — login page)
     $r->get('/theme.css', [ThemeCssController::class, 'css'], 'theme.css');

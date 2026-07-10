@@ -208,6 +208,11 @@ final class Router
     {
         $path = (string) (parse_url($uri, PHP_URL_PATH) ?? '/');
         $base = rtrim((string) parse_url((string) Config::env('APP_URL', ''), PHP_URL_PATH), '/');
+        if ($base === '') {
+            // No APP_URL yet (fresh install): derive the base from the script path.
+            $scriptDir = str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/')));
+            $base = rtrim($scriptDir === '/' ? '' : preg_replace('#/public$#', '', $scriptDir), '/');
+        }
         foreach ([$base . '/public/index.php', $base . '/public', $base, '/index.php'] as $candidate) {
             if ($candidate !== '' && $candidate !== '/' && str_starts_with($path, $candidate)) {
                 $path = substr($path, strlen($candidate));
