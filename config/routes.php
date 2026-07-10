@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Controllers\Admin\MenuController;
 use App\Controllers\Admin\RoleController;
 use App\Controllers\Admin\SsoProviderController;
+use App\Controllers\NotificationController;
+use App\Controllers\SearchController;
 use App\Controllers\Admin\UserController;
 use App\Controllers\Admin\UserImportController;
 use App\Controllers\AuthController;
@@ -48,6 +51,9 @@ return static function (Router $r): void {
         $r->post('/profile', [ProfileController::class, 'update'], 'profile.update');
         $r->get('/people/{id}', [PeopleController::class, 'show'], 'people.show');
         $r->post('/impersonate/stop', [UserController::class, 'stopImpersonate'], 'impersonate.stop');
+        $r->get('/search', [SearchController::class, 'index'], 'search');
+        $r->get('/notifications/recent', [NotificationController::class, 'recent'], 'notifications.recent');
+        $r->post('/notifications/read', [NotificationController::class, 'markRead'], 'notifications.read');
     });
 
     // Admin
@@ -86,6 +92,14 @@ return static function (Router $r): void {
             $r->post('/roles', [RoleController::class, 'store'], 'admin.roles.store');
             $r->post('/roles/matrix', [RoleController::class, 'saveMatrix'], 'admin.roles.matrix');
             $r->delete('/roles/{id}', [RoleController::class, 'destroy'], 'admin.roles.destroy');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':menus.manage']], static function (Router $r): void {
+            $r->get('/menus', [MenuController::class, 'index'], 'admin.menus');
+            $r->post('/menus', [MenuController::class, 'store'], 'admin.menus.store');
+            $r->post('/menus/reorder', [MenuController::class, 'reorder'], 'admin.menus.reorder');
+            $r->put('/menus/{id}', [MenuController::class, 'update'], 'admin.menus.update');
+            $r->delete('/menus/{id}', [MenuController::class, 'destroy'], 'admin.menus.destroy');
         });
     });
 };

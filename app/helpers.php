@@ -90,3 +90,23 @@ function partial(string $view, array $data = []): void
 {
     echo View::fetch($view, $data);
 }
+
+/**
+ * Inline a self-hosted SVG icon (colors follow currentColor).
+ */
+function icon(string $name, string $class = 'icon'): string
+{
+    static $cache = [];
+    $name = (string) preg_replace('/[^a-z0-9-]/', '', strtolower($name));
+    if ($name === '') {
+        return '';
+    }
+    if (!isset($cache[$name])) {
+        $file = BASE_PATH . '/public/assets/icons/' . $name . '.svg';
+        $cache[$name] = is_file($file) ? trim((string) file_get_contents($file)) : '';
+    }
+    if ($cache[$name] === '') {
+        return '';
+    }
+    return str_replace('<svg ', '<svg class="' . e($class) . '" aria-hidden="true" ', $cache[$name]);
+}
