@@ -19,7 +19,9 @@ final class CsrfMiddleware
         if (Csrf::verify(is_string($token) ? $token : null)) {
             return;
         }
-        http_response_code(419);
+        // Send an explicit status line — Apache turns a bare non-standard
+        // http_response_code(419) into a 500.
+        header(($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1') . ' 419 Page Expired');
         View::render('errors/419', [], null);
         exit;
     }

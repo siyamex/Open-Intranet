@@ -26,6 +26,9 @@ final class DB
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                 PDO::ATTR_EMULATE_PREPARES => false,
             ]);
+            // Keep MySQL's session clock aligned with PHP's timezone so
+            // CURRENT_TIMESTAMP defaults and PHP-written datetimes agree.
+            self::$pdo->exec("SET time_zone = '" . date('P') . "'");
         }
         return self::$pdo;
     }

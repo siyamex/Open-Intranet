@@ -200,6 +200,14 @@ h3 { font-size: 1.05rem; }
     background: var(--color-border);
 }
 
+.auth-heading { text-align: center; margin-bottom: 1rem; font-size: 1.15rem; }
+.auth-links { text-align: center; margin-top: 1rem; font-size: 0.9rem; }
+.auth-logo-img { max-height: 56px; margin: 0 auto 0.6rem; display: block; }
+.sso-buttons { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.topbar-spacer { flex: 1; }
+.topbar-user { font-size: 0.9rem; color: var(--color-text-muted); }
+
 /* ---- Toasts ---- */
 .toast-stack {
     position: fixed;

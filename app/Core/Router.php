@@ -116,6 +116,14 @@ final class Router
         return $url;
     }
 
+    /**
+     * The normalized route path of the current request (base prefix stripped).
+     */
+    public function currentPath(): string
+    {
+        return $this->normalize((string) ($_SERVER['REQUEST_URI'] ?? '/'));
+    }
+
     public function dispatch(string $method, string $uri): void
     {
         $httpMethod = strtoupper($method);

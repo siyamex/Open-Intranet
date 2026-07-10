@@ -1,10 +1,16 @@
-<?php use App\Core\View; ?>
+<?php
+use App\Core\Settings;
+use App\Core\View;
+
+$siteName = (string) Settings::get('site_name', config('app.name'));
+$logoPath = Settings::get('logo_path');
+?>
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title><?= e(isset($title) ? $title . ' — ' . config('app.name') : config('app.name')) ?></title>
+<title><?= e(isset($title) ? $title . ' — ' . $siteName : $siteName) ?></title>
 <link rel="stylesheet" href="<?= e(asset('css/app.css')) ?>">
 <?= View::section('styles') ?>
 </head>
@@ -12,8 +18,12 @@
 <main class="auth-wrap">
     <div class="auth-card">
         <div class="auth-brand">
-            <div class="auth-logo" aria-hidden="true"><?= e(mb_substr((string) config('app.name'), 0, 1)) ?></div>
-            <h1 class="auth-title"><?= e(config('app.name')) ?></h1>
+            <?php if (is_string($logoPath) && $logoPath !== ''): ?>
+                <img class="auth-logo-img" src="<?= e(base_url($logoPath)) ?>" alt="<?= e($siteName) ?>">
+            <?php else: ?>
+                <div class="auth-logo" aria-hidden="true"><?= e(mb_substr($siteName, 0, 1)) ?></div>
+            <?php endif; ?>
+            <h1 class="auth-title"><?= e($siteName) ?></h1>
         </div>
         <?php partial('partials/flash'); ?>
         <?= $content ?>
