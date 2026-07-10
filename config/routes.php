@@ -2,8 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Controllers\Admin\AuditController as AdminAuditController;
+use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Controllers\Admin\MenuController;
+use App\Controllers\Admin\SettingsController as AdminSettingsController;
+use App\Middleware\ModuleMiddleware;
 use App\Controllers\Admin\NewsController as AdminNewsController;
 use App\Controllers\DocumentController;
 use App\Controllers\FileController;
@@ -65,17 +69,33 @@ return static function (Router $r): void {
         $r->post('/quick-links/{id}/click', [QuickLinkController::class, 'click'], 'quick-links.click');
         $r->post('/quick-links/{id}/pin', [QuickLinkController::class, 'pin'], 'quick-links.pin');
         $r->post('/quick-links/order', [QuickLinkController::class, 'order'], 'quick-links.order');
-        $r->get('/news', [NewsController::class, 'index'], 'news.index');
-        $r->get('/news/{slug}', [NewsController::class, 'show'], 'news.show');
-        $r->post('/news/{slug}/comments', [NewsController::class, 'comment'], 'news.comment');
-        $r->post('/news/{slug}/react', [NewsController::class, 'react'], 'news.react');
-        $r->get('/news-media/{file}', [MediaController::class, 'newsMedia'], 'news.media');
-        $r->get('/documents', [DocumentController::class, 'index'], 'documents.index');
-        $r->get('/files/{uuid}', [FileController::class, 'serve'], 'files.serve');
+        $r->group(['middleware' => [ModuleMiddleware::class . ':news']], static function (Router $r): void {
+            $r->get('/news', [NewsController::class, 'index'], 'news.index');
+            $r->get('/news/{slug}', [NewsController::class, 'show'], 'news.show');
+            $r->post('/news/{slug}/comments', [NewsController::class, 'comment'], 'news.comment');
+            $r->post('/news/{slug}/react', [NewsController::class, 'react'], 'news.react');
+            $r->get('/news-media/{file}', [MediaController::class, 'newsMedia'], 'news.media');
+        });
+        $r->group(['middleware' => [ModuleMiddleware::class . ':documents']], static function (Router $r): void {
+            $r->get('/documents', [DocumentController::class, 'index'], 'documents.index');
+            $r->get('/files/{uuid}', [FileController::class, 'serve'], 'files.serve');
+        });
     });
 
     // Admin
     $r->group(['prefix' => '/admin', 'middleware' => [AuthMiddleware::class]], static function (Router $r): void {
+        $r->get('/', [AdminDashboardController::class, 'index'], 'admin.dashboard');
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':settings.manage']], static function (Router $r): void {
+            $r->get('/settings', [AdminSettingsController::class, 'index'], 'admin.settings');
+            $r->post('/settings', [AdminSettingsController::class, 'save'], 'admin.settings.save');
+            $r->post('/settings/test-mail', [AdminSettingsController::class, 'testMail'], 'admin.settings.test-mail');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':audit.view']], static function (Router $r): void {
+            $r->get('/audit', [AdminAuditController::class, 'index'], 'admin.audit');
+        });
+
         $r->group(['middleware' => [PermissionMiddleware::class . ':sso.manage']], static function (Router $r): void {
             $r->get('/sso', [SsoProviderController::class, 'index'], 'admin.sso');
             $r->get('/sso/create', [SsoProviderController::class, 'create'], 'admin.sso.create');

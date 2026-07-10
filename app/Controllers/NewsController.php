@@ -103,7 +103,8 @@ final class NewsController
             [$post['published_at']]
         );
 
-        $commentsEnabled = (bool) Settings::get('comments_enabled', true) && (int) $post['allow_comments'] === 1;
+        $commentsEnabled = \App\Core\Modules::enabled('comments')
+            && (bool) Settings::get('comments_enabled', true) && (int) $post['allow_comments'] === 1;
         $comments = $commentsEnabled ? DB::fetchAll(
             'SELECT nc.*, u.name AS user_name, u.avatar_path AS user_avatar
              FROM news_comments nc JOIN users u ON u.id = nc.user_id
@@ -111,7 +112,7 @@ final class NewsController
             [(int) $post['id']]
         ) : [];
 
-        $reactionsEnabled = (bool) Settings::get('reactions_enabled', true);
+        $reactionsEnabled = \App\Core\Modules::enabled('reactions') && (bool) Settings::get('reactions_enabled', true);
         $reactions = [];
         $myReactions = [];
         if ($reactionsEnabled) {
@@ -145,7 +146,8 @@ final class NewsController
     public function comment(string $slug): void
     {
         $post = DB::fetch("SELECT * FROM news WHERE slug = ? AND status = 'published'", [$slug]);
-        if ($post === null || !(bool) Settings::get('comments_enabled', true) || (int) $post['allow_comments'] !== 1) {
+        if ($post === null || !\App\Core\Modules::enabled('comments')
+            || !(bool) Settings::get('comments_enabled', true) || (int) $post['allow_comments'] !== 1) {
             $this->notFound();
         }
         $body = trim((string) ($_POST['body'] ?? ''));
@@ -169,7 +171,8 @@ final class NewsController
         $post = DB::fetch("SELECT id FROM news WHERE slug = ? AND status = 'published'", [$slug]);
         $allowed = ['👍', '🎉', '❤️', '💡', '😄'];
         $emoji = (string) ($_POST['emoji'] ?? '');
-        if ($post === null || !(bool) Settings::get('reactions_enabled', true) || !in_array($emoji, $allowed, true)) {
+        if ($post === null || !\App\Core\Modules::enabled('reactions')
+            || !(bool) Settings::get('reactions_enabled', true) || !in_array($emoji, $allowed, true)) {
             header('Content-Type: application/json');
             echo json_encode(['ok' => false]);
             exit;

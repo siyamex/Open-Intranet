@@ -11,9 +11,34 @@ namespace App\Core;
  */
 final class Mailer
 {
+    /**
+     * SMTP settings come from the admin settings table first, then .env.
+     */
+    private static function setting(string $key, string $envKey, mixed $default = ''): mixed
+    {
+        $value = Settings::get($key);
+        if ($value !== null && $value !== '') {
+            return $value;
+        }
+        return Config::env($envKey, $default);
+    }
+
+    private static function smtpPassword(): string
+    {
+        $encrypted = Settings::get('smtp_pass_encrypted');
+        if (is_string($encrypted) && $encrypted !== '') {
+            try {
+                return Crypto::decrypt($encrypted);
+            } catch (\Throwable) {
+                // fall through to .env
+            }
+        }
+        return (string) Config::env('SMTP_PASS', '');
+    }
+
     public static function send(string $to, string $subject, string $html, ?string $text = null): bool
     {
-        $fromRaw = (string) Config::env('SMTP_FROM', 'OpenIntranet <no-reply@localhost>');
+        $fromRaw = (string) self::setting('smtp_from', 'SMTP_FROM', 'OpenIntranet <no-reply@localhost>');
         [$fromName, $fromEmail] = self::parseAddress($fromRaw);
         $text ??= trim(strip_tags(preg_replace('#<br\s*/?>#i', "\n", $html) ?? $html));
 
@@ -35,7 +60,7 @@ final class Mailer
 
         self::logMail($to, $subject, $text);
 
-        $host = (string) Config::env('SMTP_HOST', '');
+        $host = (string) self::setting('smtp_host', 'SMTP_HOST');
         if ($host !== '') {
             try {
                 self::smtpSend($fromEmail, $to, "Subject: " . self::encodeHeader($subject) . "\r\nTo: {$to}\r\n" . implode("\r\n", $headers) . "\r\n\r\n" . $body);
@@ -58,10 +83,10 @@ final class Mailer
 
     private static function smtpSend(string $from, string $to, string $data): void
     {
-        $host = (string) Config::env('SMTP_HOST', '');
-        $port = (int) Config::env('SMTP_PORT', 587);
-        $user = (string) Config::env('SMTP_USER', '');
-        $pass = (string) Config::env('SMTP_PASS', '');
+        $host = (string) self::setting('smtp_host', 'SMTP_HOST');
+        $port = (int) self::setting('smtp_port', 'SMTP_PORT', 587);
+        $user = (string) self::setting('smtp_user', 'SMTP_USER');
+        $pass = self::smtpPassword();
 
         $remote = ($port === 465 ? 'ssl://' : 'tcp://') . $host . ':' . $port;
         $fp = stream_socket_client($remote, $errno, $errstr, 10);

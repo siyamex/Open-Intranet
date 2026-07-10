@@ -25,6 +25,17 @@ final class AuthMiddleware
             redirect('login');
         }
 
+        // Idle timeout from settings (session_lifetime_minutes)
+        $lifetime = (int) \App\Core\Settings::get('session_lifetime_minutes', 120);
+        $last = (int) ($_SESSION['last_activity'] ?? 0);
+        if ($last > 0 && (time() - $last) > $lifetime * 60) {
+            Auth::logout();
+            session_start();
+            flash('warning', 'You were signed out after a period of inactivity.');
+            redirect('login');
+        }
+        $_SESSION['last_activity'] = time();
+
         $user = Auth::user();
         if ((int) ($user['must_change_password'] ?? 0) === 1) {
             $path = (string) parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH);

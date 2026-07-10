@@ -22,7 +22,7 @@ final class HomeController
         foreach ($sections as $section) {
             if ($section === 'quick_links') {
                 $data['quickLinks'] = QuickLink::forUser((int) Auth::id());
-            } elseif ($section === 'news') {
+            } elseif ($section === 'news' && \App\Core\Modules::enabled('news')) {
                 $count = (int) Settings::get('news_dashboard_count', 6);
                 $data['pinnedPosts'] = $this->newsQuery('n.is_pinned = 1', 3);
                 $pinnedIds = array_map('intval', array_column($data['pinnedPosts'], 'id'));
@@ -32,7 +32,7 @@ final class HomeController
                 ));
                 $data['newsPosts'] = array_slice($data['newsPosts'], 0, $count);
             }
-            elseif ($section === 'gazette') {
+            elseif ($section === 'gazette' && \App\Core\Modules::enabled('documents')) {
                 $count = (int) Settings::get('gazette_dashboard_count', 5);
                 $docs = DB::fetchAll(
                     'SELECT d.*, c.visible_to AS category_visible_to

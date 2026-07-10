@@ -32,6 +32,11 @@ final class MenuItem
                 continue;
             }
             $row['resolved_url'] = self::resolveUrl($row);
+            // Hide links into disabled modules
+            $module = \App\Core\Modules::forPath(self::appPath($row['resolved_url']));
+            if ($module !== null && !\App\Core\Modules::enabled($module)) {
+                continue;
+            }
             $row['is_active'] = self::isActive($row, $currentPath);
             $row['children'] = [];
             $items[(int) $row['id']] = $row;
@@ -116,11 +121,13 @@ final class MenuItem
         return base_url($url);
     }
 
-    private static function isActive(array $row, string $currentPath): bool
+    /**
+     * App-relative path of a resolved menu URL ('/news', '/documents', ...).
+     */
+    private static function appPath(string $url): string
     {
-        $url = $row['resolved_url'];
         if (str_starts_with($url, '#')) {
-            return false;
+            return '#';
         }
         $path = (string) parse_url($url, PHP_URL_PATH);
         $base = rtrim((string) parse_url((string) \App\Core\Config::env('APP_URL', ''), PHP_URL_PATH), '/');
@@ -128,8 +135,14 @@ final class MenuItem
             $path = substr($path, strlen($base));
         }
         $path = '/' . ltrim($path, '/');
-        if ($path !== '/') {
-            $path = rtrim($path, '/');
+        return $path !== '/' ? rtrim($path, '/') : '/';
+    }
+
+    private static function isActive(array $row, string $currentPath): bool
+    {
+        $path = self::appPath($row['resolved_url']);
+        if ($path === '#') {
+            return false;
         }
         if ($path === '/') {
             return $currentPath === '/';

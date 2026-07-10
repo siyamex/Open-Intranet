@@ -29,4 +29,6 @@ $router = Router::instance();
 $registerRoutes = require BASE_PATH . '/config/routes.php';
 $registerRoutes($router);
 
+(new \App\Middleware\MaintenanceMiddleware())->handle();
+
 $router->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');
