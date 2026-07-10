@@ -62,6 +62,25 @@ final class ProfileController
         redirect('profile');
     }
 
+    /**
+     * Persist the navbar dark-mode preference (auto/light/dark).
+     */
+    public function saveThemeMode(): void
+    {
+        $mode = (string) ($_POST['mode'] ?? 'auto');
+        if (!in_array($mode, ['auto', 'light', 'dark'], true)) {
+            $mode = 'auto';
+        }
+        DB::run(
+            "INSERT INTO user_prefs (user_id, `key`, `value`) VALUES (?, 'theme_mode', ?)
+             ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)",
+            [Auth::id(), $mode]
+        );
+        header('Content-Type: application/json');
+        echo json_encode(['ok' => true, 'mode' => $mode]);
+        exit;
+    }
+
     private function applyAvatar(): void
     {
         $file = $_FILES['avatar'] ?? null;

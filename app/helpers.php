@@ -91,6 +91,21 @@ function partial(string $view, array $data = []): void
     echo View::fetch($view, $data);
 }
 
+/**
+ * Per-user preference from the user_prefs table.
+ */
+function user_pref(string $key, mixed $default = null): mixed
+{
+    if (!\App\Core\Auth::check()) {
+        return $default;
+    }
+    $value = \App\Core\DB::scalar(
+        'SELECT `value` FROM user_prefs WHERE user_id = ? AND `key` = ?',
+        [\App\Core\Auth::id(), $key]
+    );
+    return $value ?? $default;
+}
+
 function format_bytes(int $bytes): string
 {
     if ($bytes >= 1073741824) {

@@ -257,21 +257,80 @@ final class SeedCommand
             'radius-md' => '10px',
             'radius-lg' => '16px',
         ];
-        $exists = DB::fetch("SELECT id FROM themes WHERE slug = 'aurora'");
-        if ($exists === null) {
-            DB::insert('themes', [
-                'name' => 'Aurora',
-                'slug' => 'aurora',
-                'source' => 'builtin',
-                'variables' => json_encode($auroraVariables, JSON_UNESCAPED_SLASHES),
-                'supports_dark' => 1,
-                'is_active' => 1,
-                'author' => 'OpenIntranet',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ]);
+        $darkBase = [
+            'color-bg' => '#0f172a',
+            'color-surface' => '#1e293b',
+            'color-surface-2' => '#273449',
+            'color-text' => '#e2e8f0',
+            'color-text-muted' => '#94a3b8',
+            'color-border' => '#334155',
+            'navbar-bg' => '#1e293b',
+            'sidebar-bg' => '#1e293b',
+        ];
+        $builtinThemes = [
+            ['Aurora', 'aurora', $auroraVariables, $darkBase, 1],
+            ['Slate', 'slate', array_merge($auroraVariables, [
+                'color-primary' => '#475569',
+                'color-accent' => '#0284c7',
+                'color-bg' => '#f8fafc',
+                'radius-sm' => '4px', 'radius-md' => '6px', 'radius-lg' => '10px',
+            ]), array_merge($darkBase, ['color-primary' => '#94a3b8']), 0],
+            ['Forest', 'forest', array_merge($auroraVariables, [
+                'color-primary' => '#15803d',
+                'color-accent' => '#ca8a04',
+                'color-bg' => '#f4f8f4',
+                'color-surface-2' => '#f0f5f0',
+            ]), array_merge($darkBase, [
+                'color-bg' => '#0c1512',
+                'color-surface' => '#16241e',
+                'color-surface-2' => '#1d2f27',
+                'color-border' => '#2d4438',
+                'color-primary' => '#4ade80',
+                'color-primary-contrast' => '#052e16',
+                'navbar-bg' => '#16241e',
+                'sidebar-bg' => '#16241e',
+            ]), 0],
+            ['Midnight', 'midnight', array_merge($auroraVariables, [
+                'color-primary' => '#818cf8',
+                'color-primary-contrast' => '#111827',
+                'color-bg' => '#0b1220',
+                'color-surface' => '#131c2e',
+                'color-surface-2' => '#1b2740',
+                'color-text' => '#dbe4f3',
+                'color-text-muted' => '#8b9bb8',
+                'color-border' => '#26334d',
+                'navbar-bg' => '#131c2e',
+                'sidebar-bg' => '#131c2e',
+            ]), [
+                'color-bg' => '#070c16',
+                'color-surface' => '#0e1524',
+                'color-surface-2' => '#151f33',
+                'color-border' => '#1f2a41',
+            ], 0],
+        ];
+        foreach ($builtinThemes as [$name, $slug, $vars, $darkVars, $isActive]) {
+            $exists = DB::fetch('SELECT id, dark_variables FROM themes WHERE slug = ?', [$slug]);
+            if ($exists === null) {
+                DB::insert('themes', [
+                    'name' => $name,
+                    'slug' => $slug,
+                    'source' => 'builtin',
+                    'variables' => json_encode($vars, JSON_UNESCAPED_SLASHES),
+                    'dark_variables' => json_encode($darkVars, JSON_UNESCAPED_SLASHES),
+                    'supports_dark' => 1,
+                    'is_active' => $isActive,
+                    'author' => 'OpenIntranet',
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+            } elseif ($exists['dark_variables'] === null) {
+                DB::update('themes', [
+                    'dark_variables' => json_encode($darkVars, JSON_UNESCAPED_SLASHES),
+                    'supports_dark' => 1,
+                ], 'id = ?', [(int) $exists['id']]);
+            }
         }
-        echo "Default theme seeded.\n";
+        echo "Built-in themes seeded.\n";
 
         // ---- Settings defaults ----------------------------------------------
         $defaults = [

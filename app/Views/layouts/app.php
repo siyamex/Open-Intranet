@@ -3,18 +3,18 @@ use App\Core\Settings;
 use App\Core\View;
 
 $siteName = (string) Settings::get('site_name', config('app.name'));
+$themeMode = (string) user_pref('theme_mode', 'auto');
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme-mode="<?= e(in_array($themeMode, ['auto', 'light', 'dark'], true) ? $themeMode : 'auto') ?>">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= e(isset($title) ? $title . ' — ' . $siteName : $siteName) ?></title>
-<link rel="stylesheet" href="<?= e(asset('css/app.css')) ?>">
-<script src="<?= e(asset('js/theme-boot.js')) ?>"></script>
+<?php partial('partials/head-assets'); ?>
 <?= View::section('styles') ?>
 </head>
-<body class="has-shell">
+<body class="has-shell" data-theme-pref-url="<?= e(url('prefs.theme-mode')) ?>" data-csrf="<?= e(csrf_token()) ?>">
 <?php partial('partials/impersonation'); ?>
 <?php partial('partials/navbar'); ?>
 <div class="shell">

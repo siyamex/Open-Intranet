@@ -11,7 +11,7 @@ $logoPath = Settings::get('logo_path');
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= e(isset($title) ? $title . ' — ' . $siteName : $siteName) ?></title>
-<link rel="stylesheet" href="<?= e(asset('css/app.css')) ?>">
+<?php partial('partials/head-assets'); ?>
 <?= View::section('styles') ?>
 </head>
 <body class="auth-body">

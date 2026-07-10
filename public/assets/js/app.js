@@ -130,22 +130,31 @@
         });
     }
 
-    // ---- Dark mode toggle ------------------------------------------------------
+    // ---- Dark mode toggle: cycles auto -> light -> dark -------------------------
     var darkToggle = document.getElementById('dark-toggle');
     if (darkToggle) {
+        var applyMode = function (mode) {
+            var root = document.documentElement;
+            var dark = mode === 'dark' || (mode === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            root.setAttribute('data-theme', dark ? 'dark' : 'light');
+            root.setAttribute('data-theme-mode', mode);
+            darkToggle.title = 'Theme: ' + mode + ' (click to change)';
+        };
+        applyMode(document.documentElement.getAttribute('data-theme-mode') || 'auto');
         darkToggle.addEventListener('click', function () {
-            var current = document.documentElement.getAttribute('data-theme');
-            var next = current === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-            // Persist to user preference when the endpoint exists (theme engine phase).
+            var order = ['auto', 'light', 'dark'];
+            var current = document.documentElement.getAttribute('data-theme-mode') || 'auto';
+            var next = order[(order.indexOf(current) + 1) % order.length];
+            applyMode(next);
+            localStorage.setItem('theme-mode', next);
             var prefUrl = document.body.dataset.themePrefUrl;
-            if (prefUrl && notifToggle) {
+            var csrf = document.body.dataset.csrf || (notifToggle ? notifToggle.dataset.csrf : '');
+            if (prefUrl) {
                 var body = new URLSearchParams();
                 body.set('mode', next);
                 fetch(prefUrl, {
                     method: 'POST',
-                    headers: { 'X-CSRF-Token': notifToggle.dataset.csrf },
+                    headers: { 'X-CSRF-Token': csrf },
                     body: body
                 });
             }

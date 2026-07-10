@@ -28,6 +28,7 @@ use App\Controllers\PeopleController;
 use App\Controllers\ProfileController;
 use App\Controllers\ProfileSecurityController;
 use App\Controllers\SsoController;
+use App\Controllers\ThemeCssController;
 use App\Core\Router;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
@@ -46,6 +47,9 @@ return static function (Router $r): void {
 
     $r->post('/logout', [AuthController::class, 'logout'], 'logout');
 
+    // Compiled theme stylesheet (public — the login page needs it)
+    $r->get('/theme.css', [ThemeCssController::class, 'css'], 'theme.css');
+
     // SSO flow (works for guests and for logged-in users linking accounts)
     $r->get('/auth/{slug}/redirect', [SsoController::class, 'redirect'], 'sso.redirect');
     $r->get('/auth/{slug}/callback', [SsoController::class, 'callback'], 'sso.callback');
@@ -63,6 +67,7 @@ return static function (Router $r): void {
         $r->get('/people/{id}', [PeopleController::class, 'show'], 'people.show');
         $r->post('/impersonate/stop', [UserController::class, 'stopImpersonate'], 'impersonate.stop');
         $r->get('/search', [SearchController::class, 'index'], 'search');
+        $r->post('/prefs/theme-mode', [ProfileController::class, 'saveThemeMode'], 'prefs.theme-mode');
         $r->get('/notifications/recent', [NotificationController::class, 'recent'], 'notifications.recent');
         $r->post('/notifications/read', [NotificationController::class, 'markRead'], 'notifications.read');
         $r->get('/qlicons/{file}', [MediaController::class, 'quickLinkIcon'], 'qlicon');
