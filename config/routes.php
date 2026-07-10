@@ -7,6 +7,7 @@ use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Controllers\Admin\MenuController;
 use App\Controllers\Admin\SettingsController as AdminSettingsController;
+use App\Controllers\Admin\ThemeController as AdminThemeController;
 use App\Middleware\ModuleMiddleware;
 use App\Controllers\Admin\NewsController as AdminNewsController;
 use App\Controllers\DocumentController;
@@ -68,6 +69,7 @@ return static function (Router $r): void {
         $r->post('/impersonate/stop', [UserController::class, 'stopImpersonate'], 'impersonate.stop');
         $r->get('/search', [SearchController::class, 'index'], 'search');
         $r->post('/prefs/theme-mode', [ProfileController::class, 'saveThemeMode'], 'prefs.theme-mode');
+        $r->get('/theme-preview', [AdminThemeController::class, 'preview'], 'theme.preview');
         $r->get('/notifications/recent', [NotificationController::class, 'recent'], 'notifications.recent');
         $r->post('/notifications/read', [NotificationController::class, 'markRead'], 'notifications.read');
         $r->get('/qlicons/{file}', [MediaController::class, 'quickLinkIcon'], 'qlicon');
@@ -175,6 +177,17 @@ return static function (Router $r): void {
             $r->post('/quick-links/reorder', [AdminQuickLinkController::class, 'reorder'], 'admin.quick-links.reorder');
             $r->put('/quick-links/{id}', [AdminQuickLinkController::class, 'update'], 'admin.quick-links.update');
             $r->delete('/quick-links/{id}', [AdminQuickLinkController::class, 'destroy'], 'admin.quick-links.destroy');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':themes.manage']], static function (Router $r): void {
+            $r->get('/themes', [AdminThemeController::class, 'index'], 'admin.themes');
+            $r->post('/themes', [AdminThemeController::class, 'store'], 'admin.themes.store');
+            $r->post('/themes/upload-login-bg', [AdminThemeController::class, 'uploadLoginBg'], 'admin.themes.upload-login-bg');
+            $r->get('/themes/{id}/edit', [AdminThemeController::class, 'edit'], 'admin.themes.edit');
+            $r->put('/themes/{id}', [AdminThemeController::class, 'update'], 'admin.themes.update');
+            $r->post('/themes/{id}/activate', [AdminThemeController::class, 'activate'], 'admin.themes.activate');
+            $r->delete('/themes/{id}', [AdminThemeController::class, 'destroy'], 'admin.themes.destroy');
+            $r->get('/themes/{id}/export', [AdminThemeController::class, 'export'], 'admin.themes.export');
         });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':menus.manage']], static function (Router $r): void {
