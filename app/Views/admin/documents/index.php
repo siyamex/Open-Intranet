@@ -60,7 +60,7 @@
                 <option value="<?= (int) $c['id'] ?>"><?= e((string) $c['name']) ?></option>
                 <?php endforeach; ?>
             </select>
-            <button type="submit" class="btn btn-secondary" onclick="return confirm('Apply the bulk action to the selected documents?');">Apply</button>
+            <button type="submit" class="btn btn-secondary" data-confirm="Apply the bulk action to the selected documents?">Apply</button>
         </div>
         <?php endif; ?>
         <div class="table-wrap">
@@ -124,7 +124,7 @@
             <td><?= $c['visible_to'] === null ? 'Everyone' : e(implode(', ', (array) json_decode((string) $c['visible_to'], true))) ?></td>
             <td>
                 <form method="post" action="<?= e(url('admin.doc-categories.destroy', ['id' => $c['id']])) ?>" style="display:inline;"
-                      onsubmit="return confirm('Delete this category? Documents inside are kept without a category.');">
+                      data-confirm="Delete this category? Documents inside are kept without a category.">
                     <?= csrf_field() ?>
                     <input type="hidden" name="_method" value="DELETE">
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>

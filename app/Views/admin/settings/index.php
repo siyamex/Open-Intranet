@@ -155,10 +155,20 @@ use App\Core\View;
 <?php elseif ($tab === 'uploads'): ?>
     <form method="post" action="<?= e(url('admin.settings.save')) ?>">
         <?= csrf_field() ?><input type="hidden" name="tab" value="uploads">
-        <div class="form-group" style="max-width:240px;">
-            <label class="form-label" for="upload_max_mb">Max upload size (MB)</label>
-            <input class="form-control" type="number" min="1" max="512" id="upload_max_mb" name="upload_max_mb" value="<?= (int) Settings::get('upload_max_mb', 20) ?>">
-            <p class="form-hint">Also constrained by php.ini upload_max_filesize (<?= e(ini_get('upload_max_filesize') ?: '?') ?>).</p>
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" for="upload_max_mb">Max upload size (MB)</label>
+                <input class="form-control" type="number" min="1" max="512" id="upload_max_mb" name="upload_max_mb" value="<?= (int) Settings::get('upload_max_mb', 20) ?>">
+                <p class="form-hint">Also constrained by php.ini upload_max_filesize (<?= e(ini_get('upload_max_filesize') ?: '?') ?>).</p>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="storage_quota_user_mb">Per-user storage quota (MB)</label>
+                <input class="form-control" type="number" min="10" id="storage_quota_user_mb" name="storage_quota_user_mb" value="<?= (int) Settings::get('storage_quota_user_mb', 500) ?>">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="storage_quota_global_mb">Global storage quota (MB)</label>
+                <input class="form-control" type="number" min="100" id="storage_quota_global_mb" name="storage_quota_global_mb" value="<?= (int) Settings::get('storage_quota_global_mb', 10240) ?>">
+            </div>
         </div>
         <div class="form-group">
             <label class="form-label">Allowed document types</label>

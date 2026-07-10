@@ -326,6 +326,19 @@ final class DocumentController
             flash('error', 'File exceeds the ' . Settings::get('upload_max_mb', 20) . ' MB limit.');
             return null;
         }
+        // Storage quotas (per user + global)
+        $userQuota = ((int) Settings::get('storage_quota_user_mb', 500)) * 1024 * 1024;
+        $globalQuota = ((int) Settings::get('storage_quota_global_mb', 10240)) * 1024 * 1024;
+        $userUsed = (int) DB::scalar('SELECT COALESCE(SUM(size_bytes), 0) FROM documents WHERE uploaded_by = ?', [Auth::id()]);
+        $globalUsed = (int) DB::scalar('SELECT COALESCE(SUM(size_bytes), 0) FROM documents');
+        if ($userUsed + (int) $file['size'] > $userQuota) {
+            flash('error', 'Your personal storage quota (' . Settings::get('storage_quota_user_mb', 500) . ' MB) would be exceeded.');
+            return null;
+        }
+        if ($globalUsed + (int) $file['size'] > $globalQuota) {
+            flash('error', 'The global storage quota is full — contact your administrator.');
+            return null;
+        }
         $original = (string) $file['name'];
         $ext = strtolower(pathinfo($original, PATHINFO_EXTENSION));
         $allowed = $this->allowedExtensions();

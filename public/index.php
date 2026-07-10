@@ -7,6 +7,23 @@ require dirname(__DIR__) . '/app/bootstrap.php';
 use App\Core\Flash;
 use App\Core\Router;
 
+set_exception_handler(static function (Throwable $e): void {
+    \App\Core\Logger::error($e->getMessage(), [
+        'type' => get_class($e),
+        'file' => $e->getFile() . ':' . $e->getLine(),
+        'url' => $_SERVER['REQUEST_URI'] ?? '',
+    ]);
+    if (!headers_sent()) {
+        http_response_code(500);
+    }
+    if (\App\Core\Config::env('APP_ENV', 'production') === 'local') {
+        echo '<pre style="padding:1rem;">' . htmlspecialchars((string) $e, ENT_QUOTES) . '</pre>';
+    } else {
+        \App\Core\View::render('errors/500', [], null);
+    }
+    exit;
+});
+
 $sessionPath = BASE_PATH . '/storage/sessions';
 if (is_dir($sessionPath) && is_writable($sessionPath)) {
     session_save_path($sessionPath);
@@ -29,6 +46,7 @@ $router = Router::instance();
 $registerRoutes = require BASE_PATH . '/config/routes.php';
 $registerRoutes($router);
 
+(new \App\Middleware\SecurityHeadersMiddleware())->handle();
 (new \App\Middleware\MaintenanceMiddleware())->handle();
 
 $router->dispatch($_SERVER['REQUEST_METHOD'] ?? 'GET', $_SERVER['REQUEST_URI'] ?? '/');

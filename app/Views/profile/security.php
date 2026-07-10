@@ -29,7 +29,7 @@
                     <td><?= e(date('j M Y', strtotime((string) $identity['created_at']))) ?></td>
                     <td>
                         <form method="post" action="<?= e(url('profile.security.unlink', ['id' => $identity['id']])) ?>"
-                              onsubmit="return confirm('Disconnect this account?');">
+                              data-confirm="Disconnect this account?">
                             <?= csrf_field() ?>
                             <button type="submit" class="btn btn-danger btn-sm">Disconnect</button>
                         </form>

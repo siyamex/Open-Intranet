@@ -30,7 +30,7 @@
             <span class="text-muted" style="font-size:0.75rem;"><?= (int) $link['clicks_30d'] ?> clicks / 30d · <?= (int) $link['click_count'] ?> total</span>
             <div style="display:flex; gap:0.3rem;">
                 <button type="button" class="btn btn-secondary btn-sm" data-ql-edit='<?= e(json_encode($link, JSON_HEX_APOS | JSON_HEX_QUOT)) ?>'>Edit</button>
-                <form method="post" action="<?= e(url('admin.quick-links.destroy', ['id' => $link['id']])) ?>" onsubmit="return confirm('Delete this link?');">
+                <form method="post" action="<?= e(url('admin.quick-links.destroy', ['id' => $link['id']])) ?>" data-confirm="Delete this link?">
                     <?= csrf_field() ?>
                     <input type="hidden" name="_method" value="DELETE">
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -54,7 +54,7 @@
             <td><canvas class="ql-spark" width="120" height="26" data-series="<?= e(json_encode($link['spark'])) ?>"></canvas></td>
             <td style="white-space:nowrap;">
                 <button type="button" class="btn btn-secondary btn-sm" data-ql-edit='<?= e(json_encode($link, JSON_HEX_APOS | JSON_HEX_QUOT)) ?>'>Edit</button>
-                <form method="post" action="<?= e(url('admin.quick-links.destroy', ['id' => $link['id']])) ?>" style="display:inline;" onsubmit="return confirm('Delete this link?');">
+                <form method="post" action="<?= e(url('admin.quick-links.destroy', ['id' => $link['id']])) ?>" style="display:inline;" data-confirm="Delete this link?">
                     <?= csrf_field() ?>
                     <input type="hidden" name="_method" value="DELETE">
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>

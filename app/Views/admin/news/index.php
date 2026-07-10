@@ -42,7 +42,7 @@
                 <?php endif; ?>
                 <?php endif; ?>
                 <form method="post" action="<?= e(url('admin.news.destroy', ['id' => $post['id']])) ?>" style="display:inline;"
-                      onsubmit="return confirm('Delete this post permanently?');">
+                      data-confirm="Delete this post permanently?">
                     <?= csrf_field() ?>
                     <input type="hidden" name="_method" value="DELETE">
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>

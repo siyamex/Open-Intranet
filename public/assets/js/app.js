@@ -2,6 +2,25 @@
 (function () {
     'use strict';
 
+    // ---- CSP-safe confirmations (replaces inline onsubmit/onclick) --------
+    document.addEventListener('submit', function (event) {
+        var form = event.target.closest('form[data-confirm]');
+        if (form && !window.confirm(form.dataset.confirm.split('\\n').join('\n'))) {
+            event.preventDefault();
+        }
+    });
+    document.addEventListener('click', function (event) {
+        var btn = event.target.closest('button[data-confirm], a[data-confirm]');
+        if (btn && !btn.closest('form[data-confirm]')) {
+            if (!window.confirm(btn.dataset.confirm.split('\\n').join('\n'))) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+            }
+        }
+        var selectable = event.target.closest('[data-select-onclick]');
+        if (selectable && selectable.select) selectable.select();
+    });
+
     // ---- Toasts -----------------------------------------------------------
     document.addEventListener('click', function (event) {
         var close = event.target.closest('.toast-close');

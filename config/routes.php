@@ -37,16 +37,21 @@ use App\Core\Router;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
 use App\Middleware\PermissionMiddleware;
+use App\Middleware\RateLimitMiddleware;
 
 return static function (Router $r): void {
     // Guest-only (login + password reset)
     $r->group(['middleware' => [GuestMiddleware::class]], static function (Router $r): void {
         $r->get('/login', [AuthController::class, 'showLogin'], 'login');
-        $r->post('/login', [AuthController::class, 'login'], 'login.post');
+        $r->group(['middleware' => [RateLimitMiddleware::class . ':login,10,300']], static function (Router $r): void {
+            $r->post('/login', [AuthController::class, 'login'], 'login.post');
+        });
         $r->get('/password/forgot', [PasswordController::class, 'forgotForm'], 'password.forgot');
-        $r->post('/password/forgot', [PasswordController::class, 'sendReset'], 'password.email');
+        $r->group(['middleware' => [RateLimitMiddleware::class . ':pwreset,5,900']], static function (Router $r): void {
+            $r->post('/password/forgot', [PasswordController::class, 'sendReset'], 'password.email');
+            $r->post('/password/reset', [PasswordController::class, 'doReset'], 'password.update');
+        });
         $r->get('/password/reset/{token}', [PasswordController::class, 'resetForm'], 'password.reset');
-        $r->post('/password/reset', [PasswordController::class, 'doReset'], 'password.update');
     });
 
     $r->post('/logout', [AuthController::class, 'logout'], 'logout');
@@ -57,8 +62,10 @@ return static function (Router $r): void {
     $r->get('/theme-assets/{slug}/{sub}/{file}', [MediaController::class, 'themeAssetSub'], 'theme.asset.sub');
 
     // SSO flow (works for guests and for logged-in users linking accounts)
-    $r->get('/auth/{slug}/redirect', [SsoController::class, 'redirect'], 'sso.redirect');
-    $r->get('/auth/{slug}/callback', [SsoController::class, 'callback'], 'sso.callback');
+    $r->group(['middleware' => [RateLimitMiddleware::class . ':sso,15,300']], static function (Router $r): void {
+        $r->get('/auth/{slug}/redirect', [SsoController::class, 'redirect'], 'sso.redirect');
+        $r->get('/auth/{slug}/callback', [SsoController::class, 'callback'], 'sso.callback');
+    });
 
     // Authenticated app
     $r->group(['middleware' => [AuthMiddleware::class]], static function (Router $r): void {
@@ -72,7 +79,9 @@ return static function (Router $r): void {
         $r->post('/profile', [ProfileController::class, 'update'], 'profile.update');
         $r->get('/people/{id}', [PeopleController::class, 'show'], 'people.show');
         $r->post('/impersonate/stop', [UserController::class, 'stopImpersonate'], 'impersonate.stop');
-        $r->get('/search', [SearchController::class, 'index'], 'search');
+        $r->group(['middleware' => [RateLimitMiddleware::class . ':search,40,60']], static function (Router $r): void {
+            $r->get('/search', [SearchController::class, 'index'], 'search');
+        });
         $r->post('/prefs/theme-mode', [ProfileController::class, 'saveThemeMode'], 'prefs.theme-mode');
         $r->get('/theme-preview', [AdminThemeController::class, 'preview'], 'theme.preview');
         $r->get('/notifications/recent', [NotificationController::class, 'recent'], 'notifications.recent');
@@ -161,7 +170,9 @@ return static function (Router $r): void {
             $r->get('/news', [AdminNewsController::class, 'index'], 'admin.news');
             $r->get('/news/create', [AdminNewsController::class, 'create'], 'admin.news.create');
             $r->post('/news', [AdminNewsController::class, 'store'], 'admin.news.store');
-            $r->post('/news/upload-image', [AdminNewsController::class, 'uploadImage'], 'admin.news.upload-image');
+            $r->group(['middleware' => [RateLimitMiddleware::class . ':upload,30,3600']], static function (Router $r): void {
+                $r->post('/news/upload-image', [AdminNewsController::class, 'uploadImage'], 'admin.news.upload-image');
+            });
             $r->post('/news/categories', [AdminNewsController::class, 'storeCategory'], 'admin.news.category.store');
             $r->get('/news/{id}/edit', [AdminNewsController::class, 'edit'], 'admin.news.edit');
             $r->put('/news/{id}', [AdminNewsController::class, 'update'], 'admin.news.update');
@@ -175,7 +186,9 @@ return static function (Router $r): void {
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':docs.upload']], static function (Router $r): void {
             $r->get('/documents', [AdminDocumentController::class, 'index'], 'admin.documents');
-            $r->post('/documents', [AdminDocumentController::class, 'store'], 'admin.documents.store');
+            $r->group(['middleware' => [RateLimitMiddleware::class . ':upload,30,3600']], static function (Router $r): void {
+                $r->post('/documents', [AdminDocumentController::class, 'store'], 'admin.documents.store');
+            });
         });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':docs.manage']], static function (Router $r): void {
@@ -206,7 +219,9 @@ return static function (Router $r): void {
             $r->post('/themes/{id}/activate', [AdminThemeController::class, 'activate'], 'admin.themes.activate');
             $r->delete('/themes/{id}', [AdminThemeController::class, 'destroy'], 'admin.themes.destroy');
             $r->get('/themes/{id}/export', [AdminThemeController::class, 'export'], 'admin.themes.export');
-            $r->post('/themes/install', [AdminThemeController::class, 'install'], 'admin.themes.install');
+            $r->group(['middleware' => [RateLimitMiddleware::class . ':theme-install,10,3600']], static function (Router $r): void {
+                $r->post('/themes/install', [AdminThemeController::class, 'install'], 'admin.themes.install');
+            });
             $r->post('/themes/{id}/rollback', [AdminThemeController::class, 'rollback'], 'admin.themes.rollback');
         });
 

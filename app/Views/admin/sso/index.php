@@ -35,7 +35,7 @@
                 <td style="white-space:nowrap;">
                     <a class="btn btn-secondary btn-sm" href="<?= e(url('admin.sso.edit', ['id' => $p['id']])) ?>">Edit</a>
                     <form method="post" action="<?= e(url('admin.sso.destroy', ['id' => $p['id']])) ?>" style="display:inline;"
-                          onsubmit="return confirm('Delete this provider? Linked identities will stop working.');">
+                          data-confirm="Delete this provider? Linked identities will stop working.">
                         <?= csrf_field() ?>
                         <input type="hidden" name="_method" value="DELETE">
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>

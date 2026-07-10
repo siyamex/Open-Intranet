@@ -29,7 +29,7 @@
                     <br><button type="submit" class="btn btn-danger btn-sm" style="margin-top:4px;"
                         formaction="<?= e(url('admin.roles.destroy', ['id' => $role['id']])) ?>"
                         formmethod="post" name="_method" value="DELETE"
-                        onclick="return confirm('Delete role <?= e((string) $role['name']) ?>?');">Delete</button>
+                        data-confirm="Delete role <?= e((string) $role['name']) ?>?">Delete</button>
                     <?php endif; ?>
                 </th>
                 <?php endforeach; ?>

@@ -115,6 +115,8 @@ final class SettingsController
     private function saveUploads(): void
     {
         Settings::set('upload_max_mb', max(1, min(512, (int) ($_POST['upload_max_mb'] ?? 20))), 'int');
+        Settings::set('storage_quota_user_mb', max(10, min(102400, (int) ($_POST['storage_quota_user_mb'] ?? 500))), 'int');
+        Settings::set('storage_quota_global_mb', max(100, min(1048576, (int) ($_POST['storage_quota_global_mb'] ?? 10240))), 'int');
         $known = ['pdf', 'docx', 'xlsx', 'pptx', 'png', 'jpg', 'zip'];
         $types = array_values(array_intersect((array) ($_POST['allowed_doc_types'] ?? []), $known));
         Settings::set('allowed_doc_types', $types !== [] ? $types : $known, 'json');

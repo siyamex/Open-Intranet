@@ -33,7 +33,7 @@
                 <span style="flex:1;"></span>
                 <button type="button" class="btn btn-secondary btn-sm" data-menu-edit='<?= e(json_encode($item, JSON_HEX_APOS | JSON_HEX_QUOT)) ?>'>Edit</button>
                 <form method="post" action="<?= e(url('admin.menus.destroy', ['id' => $item['id']])) ?>"
-                      onsubmit="return confirm('Delete this item<?= $item['children'] !== [] ? ' and its sub-items' : '' ?>?');" style="display:inline;">
+                      data-confirm="Delete this item<?= $item['children'] !== [] ? ' and its sub-items' : '' ?>?" style="display:inline;">
                     <?= csrf_field() ?>
                     <input type="hidden" name="_method" value="DELETE">
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -51,7 +51,7 @@
                         <span style="flex:1;"></span>
                         <button type="button" class="btn btn-secondary btn-sm" data-menu-edit='<?= e(json_encode($child, JSON_HEX_APOS | JSON_HEX_QUOT)) ?>'>Edit</button>
                         <form method="post" action="<?= e(url('admin.menus.destroy', ['id' => $child['id']])) ?>"
-                              onsubmit="return confirm('Delete this item?');" style="display:inline;">
+                              data-confirm="Delete this item?" style="display:inline;">
                             <?= csrf_field() ?>
                             <input type="hidden" name="_method" value="DELETE">
                             <button type="submit" class="btn btn-danger btn-sm">Delete</button>

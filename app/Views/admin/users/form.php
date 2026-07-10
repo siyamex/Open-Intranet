@@ -118,7 +118,7 @@
             <button type="submit" class="btn btn-secondary">Force password reset</button>
         </form>
         <form method="post" action="<?= e(url('admin.users.destroy', ['id' => $user['id']])) ?>"
-              onsubmit="return confirm('Delete <?= e((string) $user['name']) ?>?\n\nTheir content stays but becomes unattributed:\n<?php foreach ($contentCounts as $label => $count): ?><?= $count ?> <?= e($label) ?>\n<?php endforeach; ?>');">
+              data-confirm="Delete <?= e((string) $user['name']) ?>?\n\nTheir content stays but becomes unattributed:\n<?php foreach ($contentCounts as $label => $count): ?><?= $count ?> <?= e($label) ?>\n<?php endforeach; ?>">
             <?= csrf_field() ?>
             <input type="hidden" name="_method" value="DELETE">
             <button type="submit" class="btn btn-danger">Delete user</button>

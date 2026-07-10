@@ -36,7 +36,7 @@
             <td style="white-space:nowrap;">
                 <a class="btn btn-secondary btn-sm" href="<?= e(url('files.serve', ['uuid' => $v['uuid']])) ?>">Get</a>
                 <form method="post" action="<?= e(url('admin.documents.restore', ['id' => $v['id']])) ?>" style="display:inline;"
-                      onsubmit="return confirm('Restore v<?= (int) $v['version'] ?> as the current version?');">
+                      data-confirm="Restore v<?= (int) $v['version'] ?> as the current version?">
                     <?= csrf_field() ?>
                     <button type="submit" class="btn btn-secondary btn-sm">Restore</button>
                 </form>

@@ -43,14 +43,42 @@ final class Http
         return $data;
     }
 
+    /**
+     * SSRF guard: https only (http allowed for localhost in local dev),
+     * and the hostname must not resolve to private/link-local/loopback
+     * ranges. Note: curl re-resolves, so a tiny TOCTOU window remains —
+     * acceptable for admin-configured IdP endpoints.
+     */
     public static function assertAllowedUrl(string $url): void
     {
         $parts = parse_url($url);
         $scheme = strtolower((string) ($parts['scheme'] ?? ''));
         $host = strtolower((string) ($parts['host'] ?? ''));
-        $isLocal = in_array($host, ['localhost', '127.0.0.1', '::1'], true);
-        if ($scheme !== 'https' && !($scheme === 'http' && $isLocal)) {
+        $isDevLocalhost = Config::env('APP_ENV', 'production') === 'local'
+            && in_array($host, ['localhost', '127.0.0.1', '::1'], true);
+        if ($scheme !== 'https' && !($scheme === 'http' && $isDevLocalhost)) {
             throw new \RuntimeException('Only https:// URLs are allowed: ' . $url);
+        }
+        if ($isDevLocalhost) {
+            return;
+        }
+        if (filter_var($host, FILTER_VALIDATE_IP) !== false) {
+            self::assertPublicIp($host, $url);
+            return;
+        }
+        $ips = gethostbynamel($host);
+        if ($ips === false || $ips === []) {
+            throw new \RuntimeException('Hostname does not resolve: ' . $host);
+        }
+        foreach ($ips as $ip) {
+            self::assertPublicIp($ip, $url);
+        }
+    }
+
+    private static function assertPublicIp(string $ip, string $url): void
+    {
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+            throw new \RuntimeException('URL resolves to a private/reserved address and was blocked: ' . $url);
         }
     }
 

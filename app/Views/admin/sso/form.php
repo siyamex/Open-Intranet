@@ -34,7 +34,7 @@
         <?php if ($provider !== null): ?>
         <div class="form-group">
             <label class="form-label">Redirect URI (paste into your IdP app registration)</label>
-            <input class="form-control" readonly value="<?= e(base_url('auth/' . $provider['slug'] . '/callback')) ?>" onclick="this.select()">
+            <input class="form-control" readonly value="<?= e(base_url('auth/' . $provider['slug'] . '/callback')) ?>" data-select-onclick>
         </div>
         <?php endif; ?>
 

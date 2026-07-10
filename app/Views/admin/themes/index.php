@@ -59,7 +59,7 @@
             <a class="btn btn-secondary btn-sm" href="<?= e(url('theme.preview') . '?theme=' . (int) $theme['id']) ?>" target="_blank" rel="noopener">Preview</a>
             <?php if (\App\Core\ThemeInstaller::hasRollback((string) $theme['slug'])): ?>
             <form method="post" action="<?= e(url('admin.themes.rollback', ['id' => $theme['id']])) ?>"
-                  onsubmit="return confirm('Roll back to the previous uploaded version?');">
+                  data-confirm="Roll back to the previous uploaded version?">
                 <?= csrf_field() ?>
                 <button type="submit" class="btn btn-secondary btn-sm">Rollback v<?= e((string) $theme['version']) ?></button>
             </form>
@@ -67,7 +67,7 @@
             <?php endif; ?>
             <?php if ((int) $theme['is_active'] !== 1): ?>
             <form method="post" action="<?= e(url('admin.themes.destroy', ['id' => $theme['id']])) ?>"
-                  onsubmit="return confirm('Delete this theme?');">
+                  data-confirm="Delete this theme?">
                 <?= csrf_field() ?>
                 <input type="hidden" name="_method" value="DELETE">
                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>

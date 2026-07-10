@@ -19,6 +19,8 @@ $commands = [
     'svg:test' => \App\Console\SvgTestCommand::class,
     'publish:due' => \App\Console\PublishDueCommand::class,
     'audit:prune' => \App\Console\AuditPruneCommand::class,
+    'backup' => \App\Console\BackupCommand::class,
+    'routes:audit' => \App\Console\RoutesAuditCommand::class,
 ];
 
 $name = $argv[1] ?? 'help';
