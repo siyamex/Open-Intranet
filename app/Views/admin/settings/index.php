@@ -172,6 +172,45 @@ use App\Core\View;
         <button type="submit" class="btn btn-primary">Save upload settings</button>
     </form>
 
+<?php elseif ($tab === 'directory'): ?>
+    <form method="post" action="<?= e(url('admin.settings.save')) ?>">
+        <?= csrf_field() ?><input type="hidden" name="tab" value="directory">
+        <div class="form-group">
+            <label class="form-label">Fields visible in the directory</label>
+            <?php $visible = \App\Controllers\DirectoryController::visibleFields(); ?>
+            <div class="checkbox-row">
+                <?php foreach (['email' => 'Email', 'phone' => 'Phone', 'department' => 'Department', 'location' => 'Location', 'skills' => 'Skills', 'local_time' => 'Local time'] as $key => $label): ?>
+                <label class="form-check"><input type="checkbox" name="visible[]" value="<?= $key ?>" <?= in_array($key, $visible, true) ? 'checked' : '' ?>> <?= $label ?></label>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Searchable fields <span class="text-muted">(names are always searchable)</span></label>
+            <?php $searchable = \App\Controllers\DirectoryController::searchableFields(); ?>
+            <div class="checkbox-row">
+                <?php foreach (['title' => 'Job title', 'email' => 'Email', 'phone' => 'Phone', 'skills' => 'Skills'] as $key => $label): ?>
+                <label class="form-check"><input type="checkbox" name="searchable[]" value="<?= $key ?>" <?= in_array($key, $searchable, true) ? 'checked' : '' ?>> <?= $label ?></label>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Fields employees may edit themselves</label>
+            <?php $selfEdit = (array) Settings::get('profile_self_editable', ['name', 'phone', 'location', 'timezone', 'bio', 'avatar']); ?>
+            <div class="checkbox-row">
+                <?php foreach (['name' => 'Name', 'phone' => 'Phone', 'location' => 'Location', 'timezone' => 'Timezone', 'bio' => 'Bio', 'avatar' => 'Photo'] as $key => $label): ?>
+                <label class="form-check"><input type="checkbox" name="self_edit[]" value="<?= $key ?>" <?= in_array($key, $selfEdit, true) ? 'checked' : '' ?>> <?= $label ?></label>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="chat_template">Chat link template <span class="text-muted">({email} is replaced)</span></label>
+            <input class="form-control" id="chat_template" name="chat_template"
+                   value="<?= e((string) Settings::get('directory_chat_template', '')) ?>"
+                   placeholder="https://teams.microsoft.com/l/chat/0/0?users={email}">
+        </div>
+        <button type="submit" class="btn btn-primary">Save directory settings</button>
+    </form>
+
 <?php elseif ($tab === 'modules'): ?>
     <form method="post" action="<?= e(url('admin.settings.save')) ?>">
         <?= csrf_field() ?><input type="hidden" name="tab" value="modules">

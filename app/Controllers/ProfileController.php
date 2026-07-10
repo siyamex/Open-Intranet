@@ -24,7 +24,33 @@ final class ProfileController
             'user' => Auth::user(),
             'editable' => $this->editableFields(),
             'department' => $this->departmentName(),
+            'skills' => array_column(DB::fetchAll(
+                'SELECT skill FROM user_skills WHERE user_id = ? ORDER BY skill',
+                [Auth::id()]
+            ), 'skill'),
         ]);
+    }
+
+    public function addSkill(): void
+    {
+        $skill = trim((string) ($_POST['skill'] ?? ''));
+        if ($skill === '' || mb_strlen($skill) > 50) {
+            flash('error', 'Skills must be 1–50 characters.');
+            redirect('profile');
+        }
+        $count = (int) DB::scalar('SELECT COUNT(*) FROM user_skills WHERE user_id = ?', [Auth::id()]);
+        if ($count >= 20) {
+            flash('error', 'You can list up to 20 skills.');
+            redirect('profile');
+        }
+        DB::run('INSERT IGNORE INTO user_skills (user_id, skill) VALUES (?, ?)', [Auth::id(), $skill]);
+        redirect('profile');
+    }
+
+    public function removeSkill(): void
+    {
+        DB::delete('user_skills', 'user_id = ? AND skill = ?', [Auth::id(), (string) ($_POST['skill'] ?? '')]);
+        redirect('profile');
     }
 
     public function update(): void

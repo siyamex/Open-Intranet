@@ -34,11 +34,23 @@ final class PeopleController
              ORDER BY published_at DESC LIMIT 5",
             [(int) $id]
         );
+        $localTime = null;
+        if (!empty($person['timezone'])) {
+            try {
+                $localTime = (new \DateTime('now', new \DateTimeZone((string) $person['timezone'])))->format('H:i');
+            } catch (\Throwable) {
+            }
+        }
         View::render('people/show', [
             'title' => (string) $person['name'],
             'person' => $person,
             'reports' => $reports,
             'recentNews' => $recentNews,
+            'skills' => array_column(DB::fetchAll(
+                'SELECT skill FROM user_skills WHERE user_id = ? ORDER BY skill',
+                [(int) $id]
+            ), 'skill'),
+            'localTime' => $localTime,
         ]);
     }
 }

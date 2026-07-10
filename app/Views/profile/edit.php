@@ -64,3 +64,23 @@
         <a class="btn btn-secondary" href="<?= e(url('profile.security')) ?>">Security settings</a>
     </form>
 </div>
+
+<div class="card" style="max-width:680px;">
+    <h2>My skills</h2>
+    <p class="text-muted">Shown on your profile and searchable in the directory.</p>
+    <div class="dir-skills" style="margin-bottom:0.75rem;">
+        <?php foreach ($skills as $skill): ?>
+        <form method="post" action="<?= e(url('profile.skills.remove')) ?>" style="display:inline;">
+            <?= csrf_field() ?>
+            <input type="hidden" name="skill" value="<?= e((string) $skill) ?>">
+            <button type="submit" class="skill-chip skill-removable" title="Remove"><?= e((string) $skill) ?> ×</button>
+        </form>
+        <?php endforeach; ?>
+        <?php if ($skills === []): ?><span class="text-muted">No skills added yet.</span><?php endif; ?>
+    </div>
+    <form method="post" action="<?= e(url('profile.skills.add')) ?>" class="filter-bar" style="margin:0;">
+        <?= csrf_field() ?>
+        <input class="form-control" name="skill" placeholder="Add a skill (e.g. Excel, Dhivehi, First Aid)" maxlength="50" required style="max-width:300px;">
+        <button type="submit" class="btn btn-secondary">Add skill</button>
+    </form>
+</div>

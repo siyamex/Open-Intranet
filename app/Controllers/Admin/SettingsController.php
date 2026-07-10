@@ -16,7 +16,7 @@ use App\Core\View;
 
 final class SettingsController
 {
-    private const TABS = ['general', 'homepage', 'authentication', 'mail', 'uploads', 'modules', 'advanced'];
+    private const TABS = ['general', 'homepage', 'authentication', 'mail', 'uploads', 'directory', 'modules', 'advanced'];
 
     public function index(): void
     {
@@ -40,6 +40,7 @@ final class SettingsController
             'authentication' => $this->saveAuthentication(),
             'mail' => $this->saveMail(),
             'uploads' => $this->saveUploads(),
+            'directory' => $this->saveDirectory(),
             'modules' => $this->saveModules(),
             'advanced' => $this->saveAdvanced(),
             default => null,
@@ -117,6 +118,17 @@ final class SettingsController
         $known = ['pdf', 'docx', 'xlsx', 'pptx', 'png', 'jpg', 'zip'];
         $types = array_values(array_intersect((array) ($_POST['allowed_doc_types'] ?? []), $known));
         Settings::set('allowed_doc_types', $types !== [] ? $types : $known, 'json');
+    }
+
+    private function saveDirectory(): void
+    {
+        $visibleKnown = ['email', 'phone', 'department', 'location', 'skills', 'local_time'];
+        $searchKnown = ['title', 'email', 'phone', 'skills'];
+        $editKnown = ['name', 'phone', 'location', 'timezone', 'bio', 'avatar'];
+        Settings::set('directory_visible_fields', array_values(array_intersect((array) ($_POST['visible'] ?? []), $visibleKnown)), 'json');
+        Settings::set('directory_searchable_fields', array_values(array_intersect((array) ($_POST['searchable'] ?? []), $searchKnown)), 'json');
+        Settings::set('profile_self_editable', array_values(array_intersect((array) ($_POST['self_edit'] ?? []), $editKnown)), 'json');
+        Settings::set('directory_chat_template', trim((string) ($_POST['chat_template'] ?? '')));
     }
 
     private function saveModules(): void

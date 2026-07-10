@@ -642,6 +642,58 @@ body.sidebar-collapsed .main { margin-left: 64px; }
 .swatch { width: 26px; height: 26px; border-radius: 6px; border: 2px solid var(--color-border); cursor: pointer; }
 .swatch:hover { border-color: var(--color-text); }
 
+/* ---- Directory ---- */
+.az-bar { display: flex; gap: 2px; flex-wrap: wrap; margin-bottom: 1rem; }
+.az-letter {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    min-width: 30px;
+    height: 30px;
+    font-size: 0.82rem;
+    color: var(--color-text);
+    cursor: pointer;
+}
+.az-letter:hover { border-color: var(--color-primary); }
+.az-letter.active { background: var(--color-primary); color: var(--color-primary-contrast); border-color: var(--color-primary); }
+
+.dir-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 0.9rem;
+}
+.dir-grid.loading { opacity: 0.5; }
+.dir-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.3rem;
+    margin-bottom: 0;
+}
+.dir-name { font-weight: 700; color: var(--color-text); }
+.dir-title { font-size: 0.85rem; }
+.dir-meta { font-size: 0.78rem; }
+.dir-skills { display: flex; gap: 0.3rem; flex-wrap: wrap; justify-content: center; }
+.skill-chip {
+    display: inline-block;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-size: 0.75rem;
+    padding: 0.12rem 0.5rem;
+    border-radius: 999px;
+}
+.skill-removable { cursor: pointer; }
+.skill-removable:hover { border-color: var(--color-danger); color: var(--color-danger); }
+.dir-actions { display: flex; gap: 0.15rem; margin-top: 0.3rem; }
+.dir-actions .icon-btn { width: 32px; height: 32px; text-decoration: none; }
+
+.org-strip { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; }
+.org-strip-node { display: flex; flex-direction: column; color: var(--color-text); }
+.org-strip-node.current strong { color: var(--color-primary); }
+.org-strip-arrow { color: var(--color-text-muted); font-size: 1.2rem; }
+
 /* ---- Theme gallery + editor ---- */
 .theme-gallery {
     display: grid;

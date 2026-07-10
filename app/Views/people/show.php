@@ -11,11 +11,34 @@
             <p style="margin:0.2rem 0;">
                 <a href="mailto:<?= e((string) $person['email']) ?>"><?= e((string) $person['email']) ?></a>
                 <?php if (!empty($person['phone'])): ?> · <a href="tel:<?= e((string) $person['phone']) ?>"><?= e((string) $person['phone']) ?></a><?php endif; ?>
+                <?php if ($localTime !== null): ?> · <span class="text-muted">🕒 <?= e($localTime) ?> local time</span><?php endif; ?>
+            </p>
+            <p style="margin:0.4rem 0 0;">
+                <a class="btn btn-secondary btn-sm" href="<?= e(url('people.vcard', ['id' => $person['id']])) ?>">Download vCard</a>
             </p>
         </div>
     </div>
+    <?php if ($skills !== []): ?>
+    <div class="dir-skills" style="margin-top:0.9rem;">
+        <?php foreach ($skills as $skill): ?><span class="skill-chip"><?= e((string) $skill) ?></span><?php endforeach; ?>
+    </div>
+    <?php endif; ?>
     <?php if (!empty($person['bio'])): ?>
     <p style="margin-top:1rem;"><?= nl2br(e((string) $person['bio'])) ?></p>
+    <?php endif; ?>
+</div>
+
+<div class="card org-strip" style="max-width:760px;">
+    <?php if (!empty($person['mgr_id'])): ?>
+    <a class="org-strip-node" href="<?= e(url('people.show', ['id' => $person['mgr_id']])) ?>">
+        <span class="text-muted">Manager</span><strong><?= e((string) $person['mgr_name']) ?></strong>
+    </a>
+    <span class="org-strip-arrow">←</span>
+    <?php endif; ?>
+    <span class="org-strip-node current"><span class="text-muted">This person</span><strong><?= e((string) $person['name']) ?></strong></span>
+    <?php if ($reports !== []): ?>
+    <span class="org-strip-arrow">→</span>
+    <span class="org-strip-node"><span class="text-muted">Direct reports</span><strong><?= count($reports) ?> people</strong></span>
     <?php endif; ?>
 </div>
 

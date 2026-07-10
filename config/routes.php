@@ -10,6 +10,7 @@ use App\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Controllers\Admin\ThemeController as AdminThemeController;
 use App\Middleware\ModuleMiddleware;
 use App\Controllers\Admin\NewsController as AdminNewsController;
+use App\Controllers\DirectoryController;
 use App\Controllers\DocumentController;
 use App\Controllers\FileController;
 use App\Controllers\Admin\QuickLinkController as AdminQuickLinkController;
@@ -89,6 +90,14 @@ return static function (Router $r): void {
             $r->get('/documents', [DocumentController::class, 'index'], 'documents.index');
             $r->get('/files/{uuid}', [FileController::class, 'serve'], 'files.serve');
         });
+        $r->group(['middleware' => [ModuleMiddleware::class . ':directory']], static function (Router $r): void {
+            $r->get('/directory', [DirectoryController::class, 'index'], 'directory.index');
+            $r->get('/api/directory', [DirectoryController::class, 'api'], 'directory.api');
+            $r->get('/directory/department/{id}', [DirectoryController::class, 'department'], 'directory.department');
+            $r->get('/people/{id}/vcard', [DirectoryController::class, 'vcard'], 'people.vcard');
+        });
+        $r->post('/profile/skills', [ProfileController::class, 'addSkill'], 'profile.skills.add');
+        $r->post('/profile/skills/remove', [ProfileController::class, 'removeSkill'], 'profile.skills.remove');
     });
 
     // Admin
