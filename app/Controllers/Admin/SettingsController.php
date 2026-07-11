@@ -79,7 +79,7 @@ final class SettingsController
 
     private function saveHomepage(): void
     {
-        $known = ['quick_links', 'news', 'gazette', 'events'];
+        $known = ['quick_links', 'news', 'gazette', 'events', 'poll'];
         $order = array_values(array_intersect(
             array_map('strval', (array) json_decode((string) ($_POST['sections_order'] ?? '[]'), true)),
             $known

@@ -6,7 +6,9 @@ use App\Controllers\Admin\AuditController as AdminAuditController;
 use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Controllers\Admin\EventController as AdminEventController;
+use App\Controllers\Admin\PollController as AdminPollController;
 use App\Controllers\EventController;
+use App\Controllers\PollController;
 use App\Controllers\Admin\MenuController;
 use App\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Controllers\Admin\ThemeController as AdminThemeController;
@@ -121,6 +123,9 @@ return static function (Router $r): void {
             $r->get('/org-chart', [OrgChartController::class, 'index'], 'orgchart.index');
             $r->get('/api/org-chart', [OrgChartController::class, 'api'], 'orgchart.api');
         });
+        $r->group(['middleware' => [ModuleMiddleware::class . ':polls']], static function (Router $r): void {
+            $r->post('/polls/{id}/vote', [PollController::class, 'vote'], 'polls.vote');
+        });
         $r->group(['middleware' => [ModuleMiddleware::class . ':events']], static function (Router $r): void {
             $r->get('/events', [EventController::class, 'index'], 'events.index');
             $r->get('/api/events', [EventController::class, 'api'], 'events.api');
@@ -217,6 +222,14 @@ return static function (Router $r): void {
             $r->post('/documents/versions/{id}/restore', [AdminDocumentController::class, 'restore'], 'admin.documents.restore');
             $r->post('/doc-categories', [AdminDocumentController::class, 'storeCategory'], 'admin.doc-categories.store');
             $r->delete('/doc-categories/{id}', [AdminDocumentController::class, 'destroyCategory'], 'admin.doc-categories.destroy');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':polls.manage']], static function (Router $r): void {
+            $r->get('/polls', [AdminPollController::class, 'index'], 'admin.polls');
+            $r->post('/polls', [AdminPollController::class, 'store'], 'admin.polls.store');
+            $r->get('/polls/{id}/results', [AdminPollController::class, 'results'], 'admin.polls.results');
+            $r->post('/polls/{id}/close', [AdminPollController::class, 'close'], 'admin.polls.close');
+            $r->delete('/polls/{id}', [AdminPollController::class, 'destroy'], 'admin.polls.destroy');
         });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':events.manage']], static function (Router $r): void {

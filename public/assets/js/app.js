@@ -149,6 +149,13 @@
         });
     }
 
+    // ---- Animated poll result bars -----------------------------------------
+    document.querySelectorAll('.poll-bar-fill').forEach(function (bar) {
+        requestAnimationFrame(function () {
+            setTimeout(function () { bar.style.width = bar.dataset.width; }, 60);
+        });
+    });
+
     // ---- Dark mode toggle: cycles auto -> light -> dark -------------------------
     var darkToggle = document.getElementById('dark-toggle');
     if (darkToggle) {

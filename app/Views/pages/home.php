@@ -12,6 +12,8 @@
         <?php partial('partials/home/gazette', ['gazetteDocs' => $gazetteDocs]); ?>
     <?php elseif ($section === 'events' && isset($upcomingEvents)): ?>
         <?php partial('partials/home/events', ['upcomingEvents' => $upcomingEvents]); ?>
+    <?php elseif ($section === 'poll' && isset($activePoll) && $activePoll !== null): ?>
+        <?php partial('partials/home/poll', ['activePoll' => $activePoll]); ?>
     <?php endif; ?>
 <?php endforeach; ?>
 

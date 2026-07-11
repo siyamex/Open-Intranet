@@ -32,7 +32,9 @@ final class HomeController
                 ));
                 $data['newsPosts'] = array_slice($data['newsPosts'], 0, $count);
             }
-            elseif ($section === 'events' && \App\Core\Modules::enabled('events')) {
+            elseif ($section === 'poll' && \App\Core\Modules::enabled('polls')) {
+                $data['activePoll'] = \App\Models\Poll::activeForUser();
+            } elseif ($section === 'events' && \App\Core\Modules::enabled('events')) {
                 $events = DB::fetchAll(
                     'SELECT id, title, location, starts_at, all_day, color, visible_to
                      FROM events WHERE ends_at >= NOW() ORDER BY starts_at LIMIT 15'

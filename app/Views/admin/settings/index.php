@@ -61,7 +61,7 @@ use App\Core\View;
         <p class="text-muted">Drag to reorder the dashboard sections; untick to hide.</p>
         <?php
         $active = (array) Settings::get('homepage_sections', ['quick_links', 'news', 'gazette']);
-        $labels = ['quick_links' => 'Apps / quick links', 'news' => 'News', 'gazette' => 'Gazette documents', 'events' => 'Upcoming events'];
+        $labels = ['quick_links' => 'Apps / quick links', 'news' => 'News', 'gazette' => 'Gazette documents', 'events' => 'Upcoming events', 'poll' => 'Active poll'];
         $ordered = array_merge($active, array_diff(array_keys($labels), $active));
         ?>
         <ul class="section-sort" id="section-sort">
