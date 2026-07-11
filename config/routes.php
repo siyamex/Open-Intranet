@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Controllers\Admin\AuditController as AdminAuditController;
 use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\DocumentController as AdminDocumentController;
+use App\Controllers\Admin\EventController as AdminEventController;
+use App\Controllers\EventController;
 use App\Controllers\Admin\MenuController;
 use App\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Controllers\Admin\ThemeController as AdminThemeController;
@@ -56,6 +58,9 @@ return static function (Router $r): void {
     });
 
     $r->post('/logout', [AuthController::class, 'logout'], 'logout');
+
+    // Personal calendar feed for external calendar apps (signed token, no session)
+    $r->get('/calendar/feed/{userId}/{token}', [EventController::class, 'feed'], 'events.feed');
 
     // First-run installer (404s itself once storage/installed.lock exists)
     $r->get('/install', [InstallController::class, 'step'], 'install');
@@ -115,6 +120,13 @@ return static function (Router $r): void {
         $r->group(['middleware' => [ModuleMiddleware::class . ':org_chart']], static function (Router $r): void {
             $r->get('/org-chart', [OrgChartController::class, 'index'], 'orgchart.index');
             $r->get('/api/org-chart', [OrgChartController::class, 'api'], 'orgchart.api');
+        });
+        $r->group(['middleware' => [ModuleMiddleware::class . ':events']], static function (Router $r): void {
+            $r->get('/events', [EventController::class, 'index'], 'events.index');
+            $r->get('/api/events', [EventController::class, 'api'], 'events.api');
+            $r->get('/events/{id}', [EventController::class, 'show'], 'events.show');
+            $r->post('/events/{id}/rsvp', [EventController::class, 'rsvp'], 'events.rsvp');
+            $r->get('/events/{id}/ics', [EventController::class, 'ics'], 'events.ics');
         });
         $r->post('/profile/skills', [ProfileController::class, 'addSkill'], 'profile.skills.add');
         $r->post('/profile/skills/remove', [ProfileController::class, 'removeSkill'], 'profile.skills.remove');
@@ -205,6 +217,13 @@ return static function (Router $r): void {
             $r->post('/documents/versions/{id}/restore', [AdminDocumentController::class, 'restore'], 'admin.documents.restore');
             $r->post('/doc-categories', [AdminDocumentController::class, 'storeCategory'], 'admin.doc-categories.store');
             $r->delete('/doc-categories/{id}', [AdminDocumentController::class, 'destroyCategory'], 'admin.doc-categories.destroy');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':events.manage']], static function (Router $r): void {
+            $r->get('/events', [AdminEventController::class, 'index'], 'admin.events');
+            $r->post('/events', [AdminEventController::class, 'store'], 'admin.events.store');
+            $r->put('/events/{id}', [AdminEventController::class, 'update'], 'admin.events.update');
+            $r->delete('/events/{id}', [AdminEventController::class, 'destroy'], 'admin.events.destroy');
         });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':links.manage']], static function (Router $r): void {

@@ -10,6 +10,8 @@
         <?php partial('partials/home/news', ['newsPosts' => $newsPosts, 'pinnedPosts' => $pinnedPosts ?? []]); ?>
     <?php elseif ($section === 'gazette' && isset($gazetteDocs)): ?>
         <?php partial('partials/home/gazette', ['gazetteDocs' => $gazetteDocs]); ?>
+    <?php elseif ($section === 'events' && isset($upcomingEvents)): ?>
+        <?php partial('partials/home/events', ['upcomingEvents' => $upcomingEvents]); ?>
     <?php endif; ?>
 <?php endforeach; ?>
 

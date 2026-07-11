@@ -104,7 +104,7 @@ final class QuickLinkController
             'title' => 'required|max:150',
             'url' => 'required|url|max:500',
             'description' => 'max:255',
-            'bg_color' => 'regex:/^$|^#[0-9a-fA-F]{3,8}$/',
+            'bg_color' => ['regex:/^$|^#[0-9a-fA-F]{3,8}$/'], // array form: the regex contains '|'
         ]);
         if ($v->fails()) {
             flash('error', (string) $v->firstError());

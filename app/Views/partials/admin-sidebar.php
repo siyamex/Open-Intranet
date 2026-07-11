@@ -9,6 +9,7 @@ $adminNav = [
     ['label' => 'Menus', 'icon' => 'menu-2', 'url' => base_url('admin/menus'), 'permission' => 'menus.manage'],
     ['label' => 'Quick Links', 'icon' => 'bolt', 'url' => base_url('admin/quick-links'), 'permission' => 'links.manage'],
     ['label' => 'News', 'icon' => 'news', 'url' => base_url('admin/news'), 'permission' => 'news.create'],
+    ['label' => 'Events', 'icon' => 'calendar', 'url' => base_url('admin/events'), 'permission' => 'events.manage'],
     ['label' => 'Documents', 'icon' => 'files', 'url' => base_url('admin/documents'), 'permission' => 'docs.upload'],
     ['label' => 'Themes', 'icon' => 'palette', 'url' => base_url('admin/themes'), 'permission' => 'themes.manage'],
     ['label' => 'SSO', 'icon' => 'shield', 'url' => base_url('admin/sso'), 'permission' => 'sso.manage'],

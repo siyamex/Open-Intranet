@@ -107,6 +107,7 @@ final class SeedCommand
             ['Org Chart', 'hierarchy', '/org-chart', null, 40],
             ['News', 'news', '/news', null, 50],
             ['Documents', 'files', '/documents', null, 60],
+            ['Events', 'calendar', '/events', null, 70],
         ];
         foreach ($menuItems as [$label, $icon, $url, $routeName, $sort]) {
             $exists = DB::fetch(
@@ -340,7 +341,7 @@ final class SeedCommand
             ['favicon_path', null, 'string'],
             ['timezone', 'UTC', 'string'],
             ['date_format', 'j M Y', 'string'],
-            ['homepage_sections', json_encode(['quick_links', 'news', 'gazette']), 'json'],
+            ['homepage_sections', json_encode(['quick_links', 'news', 'events', 'gazette']), 'json'],
             ['news_dashboard_count', '6', 'int'],
             ['gazette_dashboard_count', '5', 'int'],
             ['allow_local_login', '1', 'bool'],

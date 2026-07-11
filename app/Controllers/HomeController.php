@@ -32,7 +32,16 @@ final class HomeController
                 ));
                 $data['newsPosts'] = array_slice($data['newsPosts'], 0, $count);
             }
-            elseif ($section === 'gazette' && \App\Core\Modules::enabled('documents')) {
+            elseif ($section === 'events' && \App\Core\Modules::enabled('events')) {
+                $events = DB::fetchAll(
+                    'SELECT id, title, location, starts_at, all_day, color, visible_to
+                     FROM events WHERE ends_at >= NOW() ORDER BY starts_at LIMIT 15'
+                );
+                $data['upcomingEvents'] = array_slice(array_values(array_filter(
+                    $events,
+                    static fn (array $e): bool => \App\Core\Visibility::allowed($e['visible_to'])
+                )), 0, 5);
+            } elseif ($section === 'gazette' && \App\Core\Modules::enabled('documents')) {
                 $count = (int) Settings::get('gazette_dashboard_count', 5);
                 $docs = DB::fetchAll(
                     'SELECT d.*, c.visible_to AS category_visible_to
