@@ -75,6 +75,15 @@ final class ProfileController
                 $data[$field] = $value === '' && $field !== 'name' ? null : $value;
             }
         }
+        // Celebrations (always self-serve; day+month of birth is all that's shown)
+        foreach (['birth_date', 'hire_date'] as $dateField) {
+            if (array_key_exists($dateField, $_POST)) {
+                $value = trim((string) $_POST[$dateField]);
+                $data[$dateField] = preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) ? $value : null;
+            }
+        }
+        $data['celebrations_opt_out'] = !empty($_POST['celebrations_opt_out']) ? 1 : 0;
+
         if ($data !== []) {
             $data['updated_at'] = date('Y-m-d H:i:s');
             DB::update('users', $data, 'id = ?', [Auth::id()]);

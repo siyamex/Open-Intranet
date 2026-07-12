@@ -60,6 +60,20 @@
             <textarea class="form-control" id="bio" name="bio" rows="3"><?= e((string) old('bio', $user['bio'] ?? '')) ?></textarea>
         </div>
         <?php endif; ?>
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" for="birth_date">Birthday <span class="text-muted">(only day + month is ever shown)</span></label>
+                <input class="form-control" type="date" id="birth_date" name="birth_date" value="<?= e((string) ($user['birth_date'] ?? '')) ?>">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="hire_date">Joined the company</label>
+                <input class="form-control" type="date" id="hire_date" name="hire_date" value="<?= e((string) ($user['hire_date'] ?? '')) ?>">
+            </div>
+        </div>
+        <label class="form-check" style="margin-bottom:1rem;">
+            <input type="checkbox" name="celebrations_opt_out" value="1" <?= (int) ($user['celebrations_opt_out'] ?? 0) === 1 ? 'checked' : '' ?>>
+            Don't show my birthday/anniversary on the dashboard
+        </label>
         <button type="submit" class="btn btn-primary">Save profile</button>
         <a class="btn btn-secondary" href="<?= e(url('profile.security')) ?>">Security settings</a>
     </form>

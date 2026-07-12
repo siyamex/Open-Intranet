@@ -32,7 +32,9 @@ final class HomeController
                 ));
                 $data['newsPosts'] = array_slice($data['newsPosts'], 0, $count);
             }
-            elseif ($section === 'kudos' && \App\Core\Modules::enabled('kudos')) {
+            elseif ($section === 'celebrations' && \App\Core\Modules::enabled('celebrations')) {
+                $data['celebrations'] = \App\Models\Celebrations::upcoming(7);
+            } elseif ($section === 'kudos' && \App\Core\Modules::enabled('kudos')) {
                 $data['latestKudos'] = \App\Controllers\KudosController::feed(4);
             } elseif ($section === 'poll' && \App\Core\Modules::enabled('polls')) {
                 $data['activePoll'] = \App\Models\Poll::activeForUser();

@@ -61,7 +61,7 @@ use App\Core\View;
         <p class="text-muted">Drag to reorder the dashboard sections; untick to hide.</p>
         <?php
         $active = (array) Settings::get('homepage_sections', ['quick_links', 'news', 'gazette']);
-        $labels = ['quick_links' => 'Apps / quick links', 'news' => 'News', 'gazette' => 'Gazette documents', 'events' => 'Upcoming events', 'poll' => 'Active poll', 'kudos' => 'Latest kudos'];
+        $labels = ['quick_links' => 'Apps / quick links', 'news' => 'News', 'gazette' => 'Gazette documents', 'events' => 'Upcoming events', 'poll' => 'Active poll', 'kudos' => 'Latest kudos', 'celebrations' => 'Birthdays & anniversaries'];
         $ordered = array_merge($active, array_diff(array_keys($labels), $active));
         ?>
         <ul class="section-sort" id="section-sort">
@@ -225,7 +225,7 @@ use App\Core\View;
     <form method="post" action="<?= e(url('admin.settings.save')) ?>">
         <?= csrf_field() ?><input type="hidden" name="tab" value="modules">
         <p class="text-muted">Disabled modules disappear from menus, dashboards and their routes return 404.</p>
-        <?php $moduleLabels = ['news' => 'News', 'documents' => 'Documents & gazette', 'directory' => 'Employee directory', 'org_chart' => 'Org chart', 'comments' => 'News comments', 'reactions' => 'Emoji reactions']; ?>
+        <?php $moduleLabels = ['news' => 'News', 'documents' => 'Documents & gazette', 'directory' => 'Employee directory', 'org_chart' => 'Org chart', 'comments' => 'News comments', 'reactions' => 'Emoji reactions', 'events' => 'Events & calendar', 'polls' => 'Polls', 'kudos' => 'Kudos wall', 'celebrations' => 'Birthdays & anniversaries']; ?>
         <?php foreach ($modules as $slug => $enabled): ?>
         <label class="form-check" style="margin-bottom:0.6rem;">
             <input type="checkbox" name="modules[<?= e($slug) ?>]" value="1" <?= $enabled ? 'checked' : '' ?>>
