@@ -642,6 +642,33 @@ body.sidebar-collapsed .main { margin-left: 64px; }
 .swatch { width: 26px; height: 26px; border-radius: 6px; border: 2px solid var(--color-border); cursor: pointer; }
 .swatch:hover { border-color: var(--color-text); }
 
+/* ---- Search ---- */
+.search-results { list-style: none; margin: 0; padding: 0; }
+.search-results li { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.55rem 0; border-bottom: 1px solid var(--color-border); }
+.search-results li:last-child { border-bottom: none; }
+.search-badge { background: var(--color-accent); flex-shrink: 0; margin-top: 2px; }
+.search-snippet { font-size: 0.88rem; color: var(--color-text-muted); }
+.search-snippet mark, .search-results mark { background: color-mix(in srgb, var(--color-warning) 35%, transparent); color: inherit; border-radius: 2px; padding: 0 1px; }
+kbd {
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: 0 5px;
+    font-size: 0.8em;
+}
+.search-overlay { width: min(640px, 92vw); margin-top: 8vh; }
+.overlay-results { max-height: 50vh; overflow-y: auto; margin-top: 0.6rem; }
+.overlay-group {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    padding: 0.55rem 0.5rem 0.25rem;
+}
+.overlay-item { display: block; padding: 0.45rem 0.6rem; border-radius: var(--radius-sm); color: var(--color-text); }
+.overlay-item:hover, .overlay-item.active { background: var(--color-surface-2); text-decoration: none; }
+
 /* ---- Kudos ---- */
 .kudos-layout {
     display: grid;

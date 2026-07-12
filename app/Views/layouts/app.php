@@ -25,8 +25,10 @@ $themeMode = (string) user_pref('theme_mode', 'auto');
         <?= $content ?>
     </main>
 </div>
+<?php partial('partials/search-overlay'); ?>
 <script src="<?= e(asset('js/app.js')) ?>"></script>
 <script src="<?= e(asset('js/components.js')) ?>"></script>
+<script src="<?= e(asset('js/search-overlay.js')) ?>"></script>
 <?= View::section('scripts') ?>
 </body>
 </html>
