@@ -40,6 +40,7 @@ use App\Controllers\ProfileController;
 use App\Controllers\ProfileSecurityController;
 use App\Controllers\SsoController;
 use App\Controllers\ThemeCssController;
+use App\Controllers\WikiController;
 use App\Core\Router;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
@@ -127,6 +128,18 @@ return static function (Router $r): void {
         });
         $r->group(['middleware' => [ModuleMiddleware::class . ':polls']], static function (Router $r): void {
             $r->post('/polls/{id}/vote', [PollController::class, 'vote'], 'polls.vote');
+        });
+        $r->group(['middleware' => [ModuleMiddleware::class . ':wiki']], static function (Router $r): void {
+            $r->get('/wiki', [WikiController::class, 'index'], 'wiki.index');
+            $r->post('/wiki/spaces', [WikiController::class, 'storeSpace'], 'wiki.space.store');
+            $r->post('/wiki/preview', [WikiController::class, 'preview'], 'wiki.preview');
+            $r->get('/wiki/{slug}', [WikiController::class, 'space'], 'wiki.space');
+            $r->post('/wiki/{slug}/save', [WikiController::class, 'save'], 'wiki.save');
+            $r->get('/wiki/{slug}/{pageSlug}', [WikiController::class, 'page'], 'wiki.page');
+            $r->get('/wiki/{slug}/{pageSlug}/edit', [WikiController::class, 'edit'], 'wiki.edit');
+            $r->get('/wiki/{slug}/{pageSlug}/versions', [WikiController::class, 'versions'], 'wiki.versions');
+            $r->get('/wiki/{slug}/{pageSlug}/diff/{versionId}', [WikiController::class, 'diff'], 'wiki.diff');
+            $r->post('/wiki/{slug}/{pageSlug}/restore/{versionId}', [WikiController::class, 'restore'], 'wiki.restore');
         });
         $r->group(['middleware' => [ModuleMiddleware::class . ':kudos']], static function (Router $r): void {
             $r->get('/kudos', [KudosController::class, 'index'], 'kudos.index');

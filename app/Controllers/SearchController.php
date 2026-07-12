@@ -100,6 +100,25 @@ final class SearchController
             ], $rows);
         }
 
+        if (Modules::enabled('wiki')) {
+            $rows = self::fulltext(
+                'SELECT p.id, p.title, p.slug, p.body_md, s.slug AS space_slug, s.name AS space_name, s.visible_to
+                 FROM wiki_pages p JOIN wiki_spaces s ON s.id = p.space_id
+                 WHERE %MATCH% LIMIT 8',
+                'MATCH(p.title, p.body_md) AGAINST (? IN NATURAL LANGUAGE MODE)',
+                '(p.title LIKE ? OR p.body_md LIKE ?)',
+                $q,
+                2
+            );
+            $rows = array_values(array_filter($rows, static fn (array $p): bool => Visibility::allowed($p['visible_to'])));
+            $groups['Wiki'] = array_map(static fn (array $r): array => [
+                'title' => (string) $r['title'],
+                'snippet' => self::snippet(mb_substr((string) ($r['body_md'] ?? ''), 0, 400), $q),
+                'url' => url('wiki.page', ['slug' => $r['space_slug'], 'pageSlug' => $r['slug']]),
+                'meta' => (string) $r['space_name'],
+            ], $rows);
+        }
+
         $rows = self::fulltext(
             'SELECT * FROM quick_links WHERE is_active = 1 AND %MATCH% LIMIT 6',
             'MATCH(title) AGAINST (? IN NATURAL LANGUAGE MODE)',
