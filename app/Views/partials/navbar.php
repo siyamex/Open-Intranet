@@ -59,6 +59,7 @@ $unread = $authUser !== null ? Notify::unreadCount((int) $authUser['id']) : 0;
                 </div>
                 <a class="dropdown-item" href="<?= e(url('profile')) ?>"><?= icon('user') ?> My profile</a>
                 <a class="dropdown-item" href="<?= e(url('profile.security')) ?>"><?= icon('shield') ?> Security</a>
+                <a class="dropdown-item" href="<?= e(url('profile.notifications')) ?>"><?= icon('bell') ?> Notifications</a>
                 <?php if (Auth::can('users.manage') || Auth::can('settings.manage') || Auth::can('sso.manage') || Auth::can('news.publish') || Auth::can('docs.manage') || Auth::can('themes.manage') || Auth::can('links.manage') || Auth::can('menus.manage') || Auth::can('audit.view') || Auth::can('roles.manage')): ?>
                 <a class="dropdown-item" href="<?= e(base_url('admin')) ?>"><?= icon('settings') ?> Admin panel</a>
                 <?php endif; ?>

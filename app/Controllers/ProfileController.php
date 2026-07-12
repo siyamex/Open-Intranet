@@ -97,6 +97,42 @@ final class ProfileController
         redirect('profile');
     }
 
+    public function notifications(): void
+    {
+        $prefs = [];
+        foreach (DB::fetchAll('SELECT `key`, `value` FROM user_prefs WHERE user_id = ?', [Auth::id()]) as $row) {
+            $prefs[$row['key']] = $row['value'];
+        }
+        View::render('profile/notifications', [
+            'title' => 'Notification preferences',
+            'prefs' => $prefs,
+            'types' => ['news' => 'News published', 'documents' => 'New gazette documents', 'events' => 'New events', 'kudos' => 'Kudos received', 'mentions' => 'Mentions in comments'],
+        ]);
+    }
+
+    public function saveNotifications(): void
+    {
+        $types = ['news', 'documents', 'events', 'kudos', 'mentions'];
+        foreach ($types as $type) {
+            $this->setPref('notif_' . $type, !empty($_POST['inapp'][$type]) ? '1' : '0');
+            $this->setPref('notif_email_' . $type, !empty($_POST['email'][$type]) ? '1' : '0');
+        }
+        $frequency = in_array($_POST['digest_frequency'] ?? '', ['none', 'daily', 'weekly'], true)
+            ? (string) $_POST['digest_frequency'] : 'none';
+        $this->setPref('digest_frequency', $frequency);
+        flash('success', 'Notification preferences saved.');
+        redirect('profile/notifications');
+    }
+
+    private function setPref(string $key, string $value): void
+    {
+        DB::run(
+            'INSERT INTO user_prefs (user_id, `key`, `value`) VALUES (?, ?, ?)
+             ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)',
+            [Auth::id(), $key, $value]
+        );
+    }
+
     /**
      * Persist the navbar dark-mode preference (auto/light/dark).
      */

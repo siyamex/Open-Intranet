@@ -90,6 +90,15 @@ final class DocumentController
             'updated_at' => $now,
         ]);
         Audit::log('document.uploaded', 'document', $id, ['title' => $_POST['title'], 'name' => $stored['original']]);
+        if (!empty($_POST['is_gazette'])) {
+            $userIds = array_map('intval', array_column(DB::fetchAll(
+                "SELECT id FROM users WHERE status = 'active' AND id != ?",
+                [Auth::id()]
+            ), 'id'));
+            foreach ($userIds as $userId) {
+                \App\Core\Notify::send($userId, 'documents', 'New gazette document: ' . trim((string) $_POST['title']), null, base_url('documents'));
+            }
+        }
         flash('success', 'Document uploaded.');
         redirect('admin/documents');
     }

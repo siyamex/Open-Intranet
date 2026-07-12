@@ -40,6 +40,15 @@ final class EventController
         $id = DB::insert('events', $data);
         $this->materializeRecurrence($id, $data);
         Audit::log('event.created', 'event', $id, ['title' => $data['title']]);
+        foreach (DB::fetchAll("SELECT id FROM users WHERE status = 'active' AND id != ?", [Auth::id()]) as $u) {
+            \App\Core\Notify::send(
+                (int) $u['id'],
+                'events',
+                'New event: ' . $data['title'],
+                date('j M Y H:i', strtotime((string) $data['starts_at'])),
+                url('events.show', ['id' => $id])
+            );
+        }
         flash('success', 'Event created.');
         redirect('admin/events');
     }

@@ -8,6 +8,9 @@ final class Notify
 {
     public static function send(int $userId, string $type, string $title, ?string $body = null, ?string $url = null): void
     {
+        if (self::pref($userId, 'notif_' . $type) === '0') {
+            return; // user turned this type off entirely
+        }
         DB::insert('notifications', [
             'user_id' => $userId,
             'type' => $type,
@@ -16,6 +19,24 @@ final class Notify
             'url' => $url,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
+        if (self::pref($userId, 'notif_email_' . $type) === '1') {
+            $email = DB::scalar("SELECT email FROM users WHERE id = ? AND status = 'active'", [$userId]);
+            if (is_string($email) && $email !== '') {
+                Mailer::send(
+                    $email,
+                    $title,
+                    '<p>' . e($title) . '</p>'
+                    . ($body !== null ? '<p>' . e($body) . '</p>' : '')
+                    . ($url !== null ? '<p><a href="' . e($url) . '">Open in ' . e((string) Settings::get('site_name', 'OpenIntranet')) . '</a></p>' : '')
+                );
+            }
+        }
+    }
+
+    private static function pref(int $userId, string $key): ?string
+    {
+        $value = DB::scalar('SELECT `value` FROM user_prefs WHERE user_id = ? AND `key` = ?', [$userId, $key]);
+        return is_string($value) ? $value : null;
     }
 
     /**

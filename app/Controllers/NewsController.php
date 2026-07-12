@@ -162,6 +162,21 @@ final class NewsController
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
+        // @mentions: "@Full Name" (case-insensitive) notifies that user
+        if (str_contains($body, '@')) {
+            foreach (DB::fetchAll("SELECT id, name FROM users WHERE status = 'active'") as $candidate) {
+                if ((int) $candidate['id'] !== Auth::id()
+                    && mb_stripos($body, '@' . $candidate['name']) !== false) {
+                    \App\Core\Notify::send(
+                        (int) $candidate['id'],
+                        'mentions',
+                        (string) (Auth::user()['name'] ?? 'Someone') . ' mentioned you in a comment',
+                        mb_substr($body, 0, 120),
+                        base_url('news/' . $slug . '#comments')
+                    );
+                }
+            }
+        }
         flash('success', 'Comment posted.');
         redirect('news/' . rawurlencode($slug) . '#comments');
     }

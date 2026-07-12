@@ -22,6 +22,7 @@ $commands = [
     'audit:prune' => \App\Console\AuditPruneCommand::class,
     'backup' => \App\Console\BackupCommand::class,
     'routes:audit' => \App\Console\RoutesAuditCommand::class,
+    'digest:send' => \App\Console\DigestSendCommand::class,
 ];
 
 $name = $argv[1] ?? 'help';

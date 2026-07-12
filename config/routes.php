@@ -142,6 +142,8 @@ return static function (Router $r): void {
         });
         $r->post('/profile/skills', [ProfileController::class, 'addSkill'], 'profile.skills.add');
         $r->post('/profile/skills/remove', [ProfileController::class, 'removeSkill'], 'profile.skills.remove');
+        $r->get('/profile/notifications', [ProfileController::class, 'notifications'], 'profile.notifications');
+        $r->post('/profile/notifications', [ProfileController::class, 'saveNotifications'], 'profile.notifications.save');
     });
 
     // Admin
