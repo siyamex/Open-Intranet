@@ -6,8 +6,10 @@ use App\Controllers\Admin\AuditController as AdminAuditController;
 use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Controllers\Admin\EventController as AdminEventController;
+use App\Controllers\Admin\KudosController as AdminKudosController;
 use App\Controllers\Admin\PollController as AdminPollController;
 use App\Controllers\EventController;
+use App\Controllers\KudosController;
 use App\Controllers\PollController;
 use App\Controllers\Admin\MenuController;
 use App\Controllers\Admin\SettingsController as AdminSettingsController;
@@ -126,6 +128,11 @@ return static function (Router $r): void {
         $r->group(['middleware' => [ModuleMiddleware::class . ':polls']], static function (Router $r): void {
             $r->post('/polls/{id}/vote', [PollController::class, 'vote'], 'polls.vote');
         });
+        $r->group(['middleware' => [ModuleMiddleware::class . ':kudos']], static function (Router $r): void {
+            $r->get('/kudos', [KudosController::class, 'index'], 'kudos.index');
+            $r->post('/kudos', [KudosController::class, 'store'], 'kudos.store');
+            $r->post('/kudos/{id}/react', [KudosController::class, 'react'], 'kudos.react');
+        });
         $r->group(['middleware' => [ModuleMiddleware::class . ':events']], static function (Router $r): void {
             $r->get('/events', [EventController::class, 'index'], 'events.index');
             $r->get('/api/events', [EventController::class, 'api'], 'events.api');
@@ -222,6 +229,14 @@ return static function (Router $r): void {
             $r->post('/documents/versions/{id}/restore', [AdminDocumentController::class, 'restore'], 'admin.documents.restore');
             $r->post('/doc-categories', [AdminDocumentController::class, 'storeCategory'], 'admin.doc-categories.store');
             $r->delete('/doc-categories/{id}', [AdminDocumentController::class, 'destroyCategory'], 'admin.doc-categories.destroy');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':kudos.moderate']], static function (Router $r): void {
+            $r->get('/kudos', [AdminKudosController::class, 'index'], 'admin.kudos');
+            $r->post('/kudos/settings', [AdminKudosController::class, 'saveSettings'], 'admin.kudos.settings');
+            $r->post('/kudos/{id}/hide', [AdminKudosController::class, 'toggleHide'], 'admin.kudos.hide');
+            $r->post('/kudos/values/{id}/toggle', [AdminKudosController::class, 'toggleValue'], 'admin.kudos.value.toggle');
+            $r->delete('/kudos/{id}', [AdminKudosController::class, 'destroy'], 'admin.kudos.destroy');
         });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':polls.manage']], static function (Router $r): void {

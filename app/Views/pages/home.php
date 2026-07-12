@@ -14,6 +14,8 @@
         <?php partial('partials/home/events', ['upcomingEvents' => $upcomingEvents]); ?>
     <?php elseif ($section === 'poll' && isset($activePoll) && $activePoll !== null): ?>
         <?php partial('partials/home/poll', ['activePoll' => $activePoll]); ?>
+    <?php elseif ($section === 'kudos' && isset($latestKudos)): ?>
+        <?php partial('partials/home/kudos', ['latestKudos' => $latestKudos]); ?>
     <?php endif; ?>
 <?php endforeach; ?>
 
