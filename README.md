@@ -4,8 +4,8 @@ An open-source company intranet portal in **pure vanilla PHP** — no
 frameworks, no Composer, no build tools. Everything is hand-rolled on PHP's
 standard library (PDO, sodium, curl, DOMDocument, finfo, GD, ZipArchive).
 
-![Dashboard](docs/screenshots/dashboard.png) <!-- screenshot placeholder -->
-![Theme editor](docs/screenshots/theme-editor.png) <!-- screenshot placeholder -->
+![Dashboard](docs/screenshots/dashboard.png)
+![Theme management](docs/screenshots/theme-editor.png)
 
 ## Features
 
