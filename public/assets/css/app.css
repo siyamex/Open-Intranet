@@ -642,6 +642,33 @@ body.sidebar-collapsed .main { margin-left: 64px; }
 .swatch { width: 26px; height: 26px; border-radius: 6px; border: 2px solid var(--color-border); cursor: pointer; }
 .swatch:hover { border-color: var(--color-text); }
 
+/* ---- Widgetized dashboard ---- */
+.widget-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; align-items: start; }
+.widget-slot.widget-full { grid-column: 1 / -1; }
+.widget-slot.widget-half { grid-column: span 1; }
+@media (max-width: 767px) { .widget-slot.widget-half { grid-column: 1 / -1; } }
+.widget-grid.editing .widget-slot {
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.4rem;
+    cursor: grab;
+}
+.widget-remove-handle { display: flex; align-items: center; gap: 0.5rem; padding: 0.2rem 0.3rem 0.5rem; font-size: 0.85rem; color: var(--color-text-muted); }
+.widget-remove-handle .widget-name { flex: 1; font-weight: 600; }
+.widget-remove { background: none; border: none; color: var(--color-danger); font-size: 1.1rem; cursor: pointer; }
+.widget-skeleton { display: flex; flex-direction: column; gap: 0.6rem; }
+.skel-line, .skel-block {
+    background: linear-gradient(90deg, var(--color-surface-2) 25%, var(--color-border) 50%, var(--color-surface-2) 75%);
+    background-size: 200% 100%;
+    animation: skel-shimmer 1.4s infinite;
+    border-radius: var(--radius-sm);
+}
+.skel-line { height: 14px; }
+.skel-block { height: 90px; }
+@keyframes skel-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.widget-picker-list { list-style: none; margin: 0.75rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; max-height: 320px; overflow-y: auto; }
+.layout-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.6rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); margin-bottom: 0.35rem; }
+
 /* ---- Analytics ---- */
 .rank-list { list-style: none; margin: 0; padding: 0; }
 .rank-list li { display: flex; justify-content: space-between; gap: 0.75rem; padding: 0.4rem 0; border-bottom: 1px solid var(--color-border); font-size: 0.9rem; }

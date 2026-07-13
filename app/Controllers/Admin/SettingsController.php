@@ -80,15 +80,8 @@ final class SettingsController
 
     private function saveHomepage(): void
     {
-        $known = ['quick_links', 'news', 'gazette', 'events', 'poll', 'kudos', 'celebrations'];
-        $order = array_values(array_intersect(
-            array_map('strval', (array) json_decode((string) ($_POST['sections_order'] ?? '[]'), true)),
-            $known
-        ));
-        $enabled = array_values(array_filter((array) ($_POST['sections_enabled'] ?? []), 'is_string'));
-        $sections = array_values(array_filter($order !== [] ? $order : $known,
-            static fn (string $s): bool => in_array($s, $enabled, true)));
-        Settings::set('homepage_sections', $sections, 'json');
+        // Section choice/order now lives in the widget layout builder
+        // (Admin > Widgets) — this tab only keeps the per-widget item counts.
         Settings::set('news_dashboard_count', max(1, min(12, (int) ($_POST['news_dashboard_count'] ?? 6))), 'int');
         Settings::set('gazette_dashboard_count', max(1, min(12, (int) ($_POST['gazette_dashboard_count'] ?? 5))), 'int');
     }

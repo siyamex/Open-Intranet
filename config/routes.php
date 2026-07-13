@@ -21,6 +21,8 @@ use App\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Controllers\Admin\EventController as AdminEventController;
 use App\Controllers\Admin\FormController as AdminFormController;
 use App\Controllers\Admin\AnalyticsController;
+use App\Controllers\Admin\WidgetController as AdminWidgetController;
+use App\Controllers\WidgetController;
 use App\Controllers\Admin\LdapController;
 use App\Controllers\RequestController;
 use App\Controllers\Admin\KudosController as AdminKudosController;
@@ -150,6 +152,10 @@ return static function (Router $r): void {
         $r->post('/push/subscribe', [PushController::class, 'subscribe'], 'push.subscribe');
         $r->post('/push/unsubscribe', [PushController::class, 'unsubscribe'], 'push.unsubscribe');
         $r->get('/qlicons/{file}', [MediaController::class, 'quickLinkIcon'], 'qlicon');
+        $r->get('/widgets/catalog', [WidgetController::class, 'catalog'], 'widgets.catalog');
+        $r->post('/widgets/layout', [WidgetController::class, 'saveLayout'], 'widgets.layout.save');
+        $r->post('/widgets/layout/reset', [WidgetController::class, 'resetLayout'], 'widgets.layout.reset');
+        $r->get('/widgets/{slug}', [WidgetController::class, 'show'], 'widgets.show');
         $r->post('/quick-links/{id}/click', [QuickLinkController::class, 'click'], 'quick-links.click');
         $r->post('/quick-links/{id}/pin', [QuickLinkController::class, 'pin'], 'quick-links.pin');
         $r->post('/quick-links/order', [QuickLinkController::class, 'order'], 'quick-links.order');
@@ -308,6 +314,16 @@ return static function (Router $r): void {
             $r->post('/documents/versions/{id}/restore', [AdminDocumentController::class, 'restore'], 'admin.documents.restore');
             $r->post('/doc-categories', [AdminDocumentController::class, 'storeCategory'], 'admin.doc-categories.store');
             $r->delete('/doc-categories/{id}', [AdminDocumentController::class, 'destroyCategory'], 'admin.doc-categories.destroy');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':widgets.manage']], static function (Router $r): void {
+            $r->get('/widgets', [AdminWidgetController::class, 'index'], 'admin.widgets');
+            $r->post('/widgets/custom', [AdminWidgetController::class, 'createCustom'], 'admin.widgets.custom.store');
+            $r->post('/widgets/{slug}/toggle', [AdminWidgetController::class, 'toggle'], 'admin.widgets.toggle');
+            $r->delete('/widgets/{slug}', [AdminWidgetController::class, 'destroy'], 'admin.widgets.destroy');
+            $r->post('/widgets/settings', [AdminWidgetController::class, 'saveSettings'], 'admin.widgets.settings');
+            $r->get('/widgets/layout', [AdminWidgetController::class, 'layout'], 'admin.widgets.layout');
+            $r->post('/widgets/layout', [AdminWidgetController::class, 'saveLayout'], 'admin.widgets.layout.save');
         });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':analytics.view']], static function (Router $r): void {

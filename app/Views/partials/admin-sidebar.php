@@ -21,6 +21,7 @@ $adminNav = [
     ['label' => 'Settings', 'icon' => 'settings', 'url' => base_url('admin/settings'), 'permission' => 'settings.manage'],
     ['label' => 'Audit Log', 'icon' => 'eye', 'url' => base_url('admin/audit'), 'permission' => 'audit.view'],
     ['label' => 'Analytics', 'icon' => 'chart-line', 'url' => base_url('admin/analytics'), 'permission' => 'analytics.view'],
+    ['label' => 'Widgets', 'icon' => 'dashboard', 'url' => base_url('admin/widgets'), 'permission' => 'widgets.manage'],
 ];
 $currentPath = Router::instance()->currentPath();
 $base = rtrim((string) parse_url((string) \App\Core\Config::env('APP_URL', ''), PHP_URL_PATH), '/');

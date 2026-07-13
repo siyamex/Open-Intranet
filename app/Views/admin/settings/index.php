@@ -56,27 +56,14 @@ use App\Core\View;
     </form>
 
 <?php elseif ($tab === 'homepage'): ?>
-    <form method="post" action="<?= e(url('admin.settings.save')) ?>">
-        <?= csrf_field() ?><input type="hidden" name="tab" value="homepage">
-        <p class="text-muted">Drag to reorder the dashboard sections; untick to hide.</p>
-        <?php
-        $active = (array) Settings::get('homepage_sections', ['quick_links', 'news', 'gazette']);
-        $labels = ['quick_links' => 'Apps / quick links', 'news' => 'News', 'gazette' => 'Gazette documents', 'events' => 'Upcoming events', 'poll' => 'Active poll', 'kudos' => 'Latest kudos', 'celebrations' => 'Birthdays & anniversaries'];
-        $ordered = array_merge($active, array_diff(array_keys($labels), $active));
-        ?>
-        <ul class="section-sort" id="section-sort">
-            <?php foreach ($ordered as $sec): ?>
-            <li draggable="true" data-section="<?= e($sec) ?>">
-                <span class="drag-handle"><?= icon('grip-vertical') ?></span>
-                <label class="form-check" style="flex:1;">
-                    <input type="checkbox" name="sections_enabled[]" value="<?= e($sec) ?>" <?= in_array($sec, $active, true) ? 'checked' : '' ?>>
-                    <?= e($labels[$sec] ?? $sec) ?>
-                </label>
-            </li>
-            <?php endforeach; ?>
-        </ul>
-        <input type="hidden" name="sections_order" id="sections-order" value="">
-        <div class="form-grid">
+    <p class="text-muted">
+        The dashboard is now built from <strong>widgets</strong> — manage which ones appear, their default
+        order per role, and whether employees may personalize their own, under
+        <a href="<?= e(url('admin.widgets')) ?>">Admin → Widgets</a>.
+    </p>
+    <div class="form-grid">
+        <form method="post" action="<?= e(url('admin.settings.save')) ?>">
+            <?= csrf_field() ?><input type="hidden" name="tab" value="homepage">
             <div class="form-group">
                 <label class="form-label" for="news_dashboard_count">News cards on dashboard</label>
                 <input class="form-control" type="number" min="1" max="12" id="news_dashboard_count" name="news_dashboard_count" value="<?= (int) Settings::get('news_dashboard_count', 6) ?>">
@@ -85,9 +72,9 @@ use App\Core\View;
                 <label class="form-label" for="gazette_dashboard_count">Gazette items on dashboard</label>
                 <input class="form-control" type="number" min="1" max="12" id="gazette_dashboard_count" name="gazette_dashboard_count" value="<?= (int) Settings::get('gazette_dashboard_count', 5) ?>">
             </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Save homepage settings</button>
-    </form>
+            <button type="submit" class="btn btn-primary">Save counts</button>
+        </form>
+    </div>
 
 <?php elseif ($tab === 'authentication'): ?>
     <form method="post" action="<?= e(url('admin.settings.save')) ?>">
