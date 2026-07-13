@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Controllers\Admin\AuditController as AdminAuditController;
+use App\Controllers\Admin\BannerController as AdminBannerController;
+use App\Controllers\BannerController;
 use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Controllers\Admin\EventController as AdminEventController;
@@ -103,6 +105,8 @@ return static function (Router $r): void {
         $r->get('/theme-preview', [AdminThemeController::class, 'preview'], 'theme.preview');
         $r->get('/notifications/recent', [NotificationController::class, 'recent'], 'notifications.recent');
         $r->post('/notifications/read', [NotificationController::class, 'markRead'], 'notifications.read');
+        $r->post('/banners/{id}/dismiss', [BannerController::class, 'dismiss'], 'banners.dismiss');
+        $r->post('/banners/{id}/ack', [BannerController::class, 'acknowledge'], 'banners.ack');
         $r->get('/qlicons/{file}', [MediaController::class, 'quickLinkIcon'], 'qlicon');
         $r->post('/quick-links/{id}/click', [QuickLinkController::class, 'click'], 'quick-links.click');
         $r->post('/quick-links/{id}/pin', [QuickLinkController::class, 'pin'], 'quick-links.pin');
@@ -172,6 +176,14 @@ return static function (Router $r): void {
     // Admin
     $r->group(['prefix' => '/admin', 'middleware' => [AuthMiddleware::class]], static function (Router $r): void {
         $r->get('/', [AdminDashboardController::class, 'index'], 'admin.dashboard');
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':banners.manage']], static function (Router $r): void {
+            $r->get('/banners', [AdminBannerController::class, 'index'], 'admin.banners');
+            $r->post('/banners', [AdminBannerController::class, 'store'], 'admin.banners.store');
+            $r->post('/banners/{id}/end', [AdminBannerController::class, 'end'], 'admin.banners.end');
+            $r->delete('/banners/{id}', [AdminBannerController::class, 'destroy'], 'admin.banners.destroy');
+            $r->get('/banners/{id}/report', [AdminBannerController::class, 'report'], 'admin.banners.report');
+        });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':settings.manage']], static function (Router $r): void {
             $r->get('/settings', [AdminSettingsController::class, 'index'], 'admin.settings');

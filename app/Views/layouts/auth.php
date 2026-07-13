@@ -14,7 +14,8 @@ $logoPath = Settings::get('logo_path');
 <?php partial('partials/head-assets'); ?>
 <?= View::section('styles') ?>
 </head>
-<body class="auth-body">
+<body class="auth-body" data-csrf="<?= e(csrf_token()) ?>">
+<?php partial('partials/banners'); ?>
 <main class="auth-wrap">
     <div class="auth-card">
         <div class="auth-brand">
@@ -30,6 +31,7 @@ $logoPath = Settings::get('logo_path');
     </div>
 </main>
 <script src="<?= e(asset('js/app.js')) ?>"></script>
+<script src="<?= e(asset('js/banners.js')) ?>"></script>
 <?= View::section('scripts') ?>
 </body>
 </html>

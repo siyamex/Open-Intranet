@@ -16,6 +16,7 @@ $adminNav = [
     ['label' => 'Documents', 'icon' => 'files', 'url' => base_url('admin/documents'), 'permission' => 'docs.upload'],
     ['label' => 'Themes', 'icon' => 'palette', 'url' => base_url('admin/themes'), 'permission' => 'themes.manage'],
     ['label' => 'SSO', 'icon' => 'shield', 'url' => base_url('admin/sso'), 'permission' => 'sso.manage'],
+    ['label' => 'Banners', 'icon' => 'alert-triangle', 'url' => base_url('admin/banners'), 'permission' => 'banners.manage'],
     ['label' => 'Settings', 'icon' => 'settings', 'url' => base_url('admin/settings'), 'permission' => 'settings.manage'],
     ['label' => 'Audit Log', 'icon' => 'eye', 'url' => base_url('admin/audit'), 'permission' => 'audit.view'],
 ];

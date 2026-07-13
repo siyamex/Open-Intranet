@@ -15,6 +15,7 @@ $themeMode = (string) user_pref('theme_mode', 'auto');
 <?= View::section('styles') ?>
 </head>
 <body class="has-shell" data-theme-pref-url="<?= e(url('prefs.theme-mode')) ?>" data-csrf="<?= e(csrf_token()) ?>">
+<?php partial('partials/banners'); ?>
 <?php partial('partials/impersonation'); ?>
 <?php partial('partials/navbar'); ?>
 <div class="shell">
@@ -28,6 +29,7 @@ $themeMode = (string) user_pref('theme_mode', 'auto');
 <script src="<?= e(asset('js/app.js')) ?>"></script>
 <script src="<?= e(asset('js/components.js')) ?>"></script>
 <script src="<?= e(asset('js/search-overlay.js')) ?>"></script>
+<script src="<?= e(asset('js/banners.js')) ?>"></script>
 <?= View::section('scripts') ?>
 </body>
 </html>
