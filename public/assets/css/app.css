@@ -642,6 +642,48 @@ body.sidebar-collapsed .main { margin-left: 64px; }
 .swatch { width: 26px; height: 26px; border-radius: 6px; border: 2px solid var(--color-border); cursor: pointer; }
 .swatch:hover { border-color: var(--color-text); }
 
+/* ---- Form builder + requests ---- */
+.fb-fields { list-style: none; margin: 0; padding: 0; }
+.fb-field {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    padding: 0.5rem 0.65rem;
+    margin-bottom: 0.45rem;
+}
+.fb-row { display: flex; align-items: center; gap: 0.5rem; }
+.fb-row .fb-label { flex: 1; }
+.fb-options { margin-top: 0.4rem; font-size: 0.88rem; }
+.fb-condition {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+}
+.fb-condition .form-control { width: auto; min-width: 120px; padding: 0.25rem 0.4rem; font-size: 0.82rem; }
+
+.status-submitted { background: var(--color-accent); }
+.status-in_review, .status-review { background: var(--color-warning); }
+.status-approved { background: var(--color-success); }
+.status-rejected { background: var(--color-danger); }
+
+.request-timeline { list-style: none; margin: 0; padding: 0; }
+.request-timeline li { display: flex; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid var(--color-border); }
+.request-timeline li:last-child { border-bottom: none; }
+.timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    margin-top: 5px;
+    flex-shrink: 0;
+}
+.timeline-dot.status-approved { background: var(--color-success); }
+.timeline-dot.status-rejected { background: var(--color-danger); }
+.timeline-dot.status-in_review { background: var(--color-warning); }
+
 /* ---- Wiki ---- */
 .wiki-toc {
     background: var(--color-surface-2);

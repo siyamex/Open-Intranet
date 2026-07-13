@@ -12,6 +12,7 @@ $adminNav = [
     ['label' => 'Events', 'icon' => 'calendar', 'url' => base_url('admin/events'), 'permission' => 'events.manage'],
     ['label' => 'Polls', 'icon' => 'chart-line', 'url' => base_url('admin/polls'), 'permission' => 'polls.manage'],
     ['label' => 'Kudos', 'icon' => 'heart', 'url' => base_url('admin/kudos'), 'permission' => 'kudos.moderate'],
+    ['label' => 'Forms', 'icon' => 'file-text', 'url' => base_url('admin/forms'), 'permission' => 'forms.manage'],
     ['label' => 'Documents', 'icon' => 'files', 'url' => base_url('admin/documents'), 'permission' => 'docs.upload'],
     ['label' => 'Themes', 'icon' => 'palette', 'url' => base_url('admin/themes'), 'permission' => 'themes.manage'],
     ['label' => 'SSO', 'icon' => 'shield', 'url' => base_url('admin/sso'), 'permission' => 'sso.manage'],

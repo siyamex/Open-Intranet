@@ -24,6 +24,7 @@ $commands = [
     'routes:audit' => \App\Console\RoutesAuditCommand::class,
     'digest:send' => \App\Console\DigestSendCommand::class,
     'wiki:reminders' => \App\Console\WikiRemindersCommand::class,
+    'forms:prune' => \App\Console\FormsPruneCommand::class,
 ];
 
 $name = $argv[1] ?? 'help';

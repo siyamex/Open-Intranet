@@ -6,6 +6,8 @@ use App\Controllers\Admin\AuditController as AdminAuditController;
 use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Controllers\Admin\EventController as AdminEventController;
+use App\Controllers\Admin\FormController as AdminFormController;
+use App\Controllers\RequestController;
 use App\Controllers\Admin\KudosController as AdminKudosController;
 use App\Controllers\Admin\PollController as AdminPollController;
 use App\Controllers\EventController;
@@ -129,6 +131,14 @@ return static function (Router $r): void {
         $r->group(['middleware' => [ModuleMiddleware::class . ':polls']], static function (Router $r): void {
             $r->post('/polls/{id}/vote', [PollController::class, 'vote'], 'polls.vote');
         });
+        $r->group(['middleware' => [ModuleMiddleware::class . ':forms']], static function (Router $r): void {
+            $r->get('/requests', [RequestController::class, 'catalog'], 'requests.catalog');
+            $r->get('/requests/file/{file}', [RequestController::class, 'file'], 'requests.file');
+            $r->get('/requests/submission/{id}', [RequestController::class, 'detail'], 'requests.detail');
+            $r->post('/requests/submission/{id}/act', [RequestController::class, 'act'], 'requests.act');
+            $r->get('/requests/{slug}', [RequestController::class, 'show'], 'requests.show');
+            $r->post('/requests/{slug}', [RequestController::class, 'submit'], 'requests.submit');
+        });
         $r->group(['middleware' => [ModuleMiddleware::class . ':wiki']], static function (Router $r): void {
             $r->get('/wiki', [WikiController::class, 'index'], 'wiki.index');
             $r->post('/wiki/spaces', [WikiController::class, 'storeSpace'], 'wiki.space.store');
@@ -244,6 +254,16 @@ return static function (Router $r): void {
             $r->post('/documents/versions/{id}/restore', [AdminDocumentController::class, 'restore'], 'admin.documents.restore');
             $r->post('/doc-categories', [AdminDocumentController::class, 'storeCategory'], 'admin.doc-categories.store');
             $r->delete('/doc-categories/{id}', [AdminDocumentController::class, 'destroyCategory'], 'admin.doc-categories.destroy');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':forms.manage']], static function (Router $r): void {
+            $r->get('/forms', [AdminFormController::class, 'index'], 'admin.forms');
+            $r->get('/forms/create', [AdminFormController::class, 'create'], 'admin.forms.create');
+            $r->post('/forms', [AdminFormController::class, 'store'], 'admin.forms.store');
+            $r->get('/forms/{id}/edit', [AdminFormController::class, 'edit'], 'admin.forms.edit');
+            $r->put('/forms/{id}', [AdminFormController::class, 'update'], 'admin.forms.update');
+            $r->delete('/forms/{id}', [AdminFormController::class, 'destroy'], 'admin.forms.destroy');
+            $r->get('/forms/{id}/submissions', [AdminFormController::class, 'submissions'], 'admin.forms.submissions');
         });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':kudos.moderate']], static function (Router $r): void {

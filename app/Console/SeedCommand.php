@@ -109,6 +109,8 @@ final class SeedCommand
             ['Documents', 'files', '/documents', null, 60],
             ['Events', 'calendar', '/events', null, 70],
             ['Wiki', 'book', '/wiki', null, 80],
+            ['Requests', 'file-text', '/requests', null, 90],
+            ['Kudos', 'heart', '/kudos', null, 100],
         ];
         foreach ($menuItems as [$label, $icon, $url, $routeName, $sort]) {
             $exists = DB::fetch(
