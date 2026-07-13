@@ -22,7 +22,7 @@ final class SearchController
         $results = null;
         if ($q !== '' && mb_strlen($q) >= 2) {
             $results = self::search($q);
-            $this->remember($q);
+            $this->remember($q, array_sum(array_map('count', $results)));
         }
         if (($_GET['format'] ?? '') === 'json') {
             header('Content-Type: application/json');
@@ -178,13 +178,22 @@ final class SearchController
         return $escaped;
     }
 
-    private function remember(string $q): void
+    private function remember(string $q, int $resultCount = 0): void
     {
         DB::insert('search_history', [
             'user_id' => Auth::id(),
             'query' => mb_substr($q, 0, 190),
             'created_at' => date('Y-m-d H:i:s'),
         ]);
+        try {
+            DB::insert('search_queries_log', [
+                'query' => mb_substr($q, 0, 190),
+                'result_count' => $resultCount,
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+        } catch (\Throwable) {
+            // analytics table optional
+        }
         // keep the history small
         DB::run(
             'DELETE FROM search_history WHERE user_id = ? AND id NOT IN (

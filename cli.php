@@ -27,6 +27,7 @@ $commands = [
     'forms:prune' => \App\Console\FormsPruneCommand::class,
     'ldap:sync' => \App\Console\LdapSyncCommand::class,
     'vapid:generate' => \App\Console\VapidGenerateCommand::class,
+    'analytics:rollup' => \App\Console\AnalyticsRollupCommand::class,
 ];
 
 $name = $argv[1] ?? 'help';

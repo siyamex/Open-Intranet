@@ -20,6 +20,7 @@ use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Controllers\Admin\EventController as AdminEventController;
 use App\Controllers\Admin\FormController as AdminFormController;
+use App\Controllers\Admin\AnalyticsController;
 use App\Controllers\Admin\LdapController;
 use App\Controllers\RequestController;
 use App\Controllers\Admin\KudosController as AdminKudosController;
@@ -58,6 +59,7 @@ use App\Controllers\SsoController;
 use App\Controllers\ThemeCssController;
 use App\Controllers\WikiController;
 use App\Core\Router;
+use App\Middleware\AnalyticsMiddleware;
 use App\Middleware\AuthMiddleware;
 use App\Middleware\GuestMiddleware;
 use App\Middleware\PermissionMiddleware;
@@ -121,7 +123,7 @@ return static function (Router $r): void {
     });
 
     // Authenticated app
-    $r->group(['middleware' => [AuthMiddleware::class]], static function (Router $r): void {
+    $r->group(['middleware' => [AuthMiddleware::class, AnalyticsMiddleware::class]], static function (Router $r): void {
         $r->get('/', [HomeController::class, 'index'], 'home');
         $r->get('/password/change', [PasswordController::class, 'changeForm'], 'password.change');
         $r->post('/password/change', [PasswordController::class, 'change'], 'password.change.post');
@@ -306,6 +308,11 @@ return static function (Router $r): void {
             $r->post('/documents/versions/{id}/restore', [AdminDocumentController::class, 'restore'], 'admin.documents.restore');
             $r->post('/doc-categories', [AdminDocumentController::class, 'storeCategory'], 'admin.doc-categories.store');
             $r->delete('/doc-categories/{id}', [AdminDocumentController::class, 'destroyCategory'], 'admin.doc-categories.destroy');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':analytics.view']], static function (Router $r): void {
+            $r->get('/analytics', [AnalyticsController::class, 'index'], 'admin.analytics');
+            $r->post('/analytics/settings', [AnalyticsController::class, 'saveSettings'], 'admin.analytics.settings');
         });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':ldap.manage']], static function (Router $r): void {
