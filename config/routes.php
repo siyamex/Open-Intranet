@@ -4,6 +4,15 @@ declare(strict_types=1);
 
 use App\Controllers\Admin\AuditController as AdminAuditController;
 use App\Controllers\Admin\BannerController as AdminBannerController;
+use App\Controllers\Api\V1\DirectoryApiController;
+use App\Controllers\Api\V1\DocumentApiController;
+use App\Controllers\Api\V1\EventApiController;
+use App\Controllers\Api\V1\NewsApiController;
+use App\Controllers\Api\V1\QuickLinkApiController;
+use App\Controllers\Api\V1\UserApiController;
+use App\Controllers\ApiDocsController;
+use App\Middleware\ApiAuthMiddleware;
+use App\Middleware\ApiRateLimitMiddleware;
 use App\Controllers\BannerController;
 use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\DocumentController as AdminDocumentController;
@@ -71,6 +80,24 @@ return static function (Router $r): void {
     // Personal calendar feed for external calendar apps (signed token, no session)
     $r->get('/calendar/feed/{userId}/{token}', [EventController::class, 'feed'], 'events.feed');
 
+    // REST API v1 (personal access token auth, not session-based)
+    $r->group(['prefix' => '/api/v1', 'middleware' => [ApiAuthMiddleware::class . ':read', ApiRateLimitMiddleware::class . ':120,60']], static function (Router $r): void {
+        $r->get('/me', [UserApiController::class, 'me'], 'api.me');
+        $r->get('/users', [UserApiController::class, 'index'], 'api.users');
+        $r->get('/directory', [DirectoryApiController::class, 'index'], 'api.directory');
+        $r->get('/news', [NewsApiController::class, 'index'], 'api.news');
+        $r->get('/news/{slug}', [NewsApiController::class, 'show'], 'api.news.show');
+        $r->get('/documents', [DocumentApiController::class, 'index'], 'api.documents');
+        $r->get('/events', [EventApiController::class, 'index'], 'api.events');
+        $r->get('/quick-links', [QuickLinkApiController::class, 'index'], 'api.quick-links');
+    });
+    $r->csrfExempt('#^/api/v1/#');
+
+    $r->group(['middleware' => [AuthMiddleware::class]], static function (Router $r): void {
+        $r->get('/api/docs', [ApiDocsController::class, 'index'], 'api.docs');
+    });
+    $r->get('/api/docs/openapi.json', [ApiDocsController::class, 'spec'], 'api.docs.spec');
+
     // First-run installer (404s itself once storage/installed.lock exists)
     $r->get('/install', [InstallController::class, 'step'], 'install');
     $r->post('/install', [InstallController::class, 'step'], 'install.post');
@@ -93,6 +120,8 @@ return static function (Router $r): void {
         $r->post('/password/change', [PasswordController::class, 'change'], 'password.change.post');
         $r->get('/profile/security', [ProfileSecurityController::class, 'index'], 'profile.security');
         $r->post('/profile/security/unlink/{id}', [ProfileSecurityController::class, 'unlink'], 'profile.security.unlink');
+        $r->post('/profile/security/tokens', [ProfileSecurityController::class, 'createToken'], 'profile.security.token.create');
+        $r->post('/profile/security/tokens/{id}/revoke', [ProfileSecurityController::class, 'revokeToken'], 'profile.security.token.revoke');
         $r->get('/avatars/{file}', [MediaController::class, 'avatar'], 'avatar');
         $r->get('/profile', [ProfileController::class, 'edit'], 'profile');
         $r->post('/profile', [ProfileController::class, 'update'], 'profile.update');

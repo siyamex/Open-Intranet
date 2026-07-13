@@ -1,0 +1,72 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "OpenIntranet API",
+    "version": "1.0.0",
+    "description": "Personal-access-token authenticated REST API. Create a token under Profile → Security."
+  },
+  "servers": [{ "url": "/api/v1" }],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": { "type": "http", "scheme": "bearer", "bearerFormat": "selector.secret" }
+    },
+    "schemas": {
+      "Envelope": {
+        "type": "object",
+        "properties": {
+          "data": {},
+          "meta": { "type": "object" },
+          "error": { "type": "object", "nullable": true }
+        }
+      }
+    }
+  },
+  "security": [{ "bearerAuth": [] }],
+  "paths": {
+    "/me": {
+      "get": {
+        "summary": "Current authenticated user",
+        "responses": { "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Envelope" } } } } }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "List active users",
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer" } },
+          { "name": "per_page", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/directory": {
+      "get": {
+        "summary": "Search the employee directory",
+        "parameters": [
+          { "name": "q", "in": "query", "schema": { "type": "string" } },
+          { "name": "page", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/news": {
+      "get": { "summary": "List published news", "responses": { "200": { "description": "OK" } } }
+    },
+    "/news/{slug}": {
+      "get": {
+        "summary": "Get a news article",
+        "parameters": [{ "name": "slug", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": { "200": { "description": "OK" }, "404": { "description": "Not found" } }
+      }
+    },
+    "/documents": {
+      "get": { "summary": "List documents (metadata + permission-checked download links)", "responses": { "200": { "description": "OK" } } }
+    },
+    "/events": {
+      "get": { "summary": "List upcoming events", "responses": { "200": { "description": "OK" } } }
+    },
+    "/quick-links": {
+      "get": { "summary": "List the authenticated user's quick links", "responses": { "200": { "description": "OK" } } }
+    }
+  }
+}
