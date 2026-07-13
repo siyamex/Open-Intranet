@@ -19,6 +19,7 @@ final class Notify
             'url' => $url,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
+        self::pushIfSubscribed($userId, $title, $body, $url);
         if (self::pref($userId, 'notif_email_' . $type) === '1') {
             $email = DB::scalar("SELECT email FROM users WHERE id = ? AND status = 'active'", [$userId]);
             if (is_string($email) && $email !== '') {
@@ -30,6 +31,14 @@ final class Notify
                     . ($url !== null ? '<p><a href="' . e($url) . '">Open in ' . e((string) Settings::get('site_name', 'OpenIntranet')) . '</a></p>' : '')
                 );
             }
+        }
+    }
+
+    private static function pushIfSubscribed(int $userId, string $title, ?string $body, ?string $url): void
+    {
+        $subs = DB::fetchAll('SELECT * FROM push_subscriptions WHERE user_id = ?', [$userId]);
+        foreach ($subs as $sub) {
+            WebPush::send($sub, ['title' => $title, 'body' => $body ?? '', 'url' => $url ?? base_url('/')]);
         }
     }
 

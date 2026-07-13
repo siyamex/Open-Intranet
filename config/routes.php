@@ -11,6 +11,8 @@ use App\Controllers\Api\V1\NewsApiController;
 use App\Controllers\Api\V1\QuickLinkApiController;
 use App\Controllers\Api\V1\UserApiController;
 use App\Controllers\ApiDocsController;
+use App\Controllers\ManifestController;
+use App\Controllers\PushController;
 use App\Middleware\ApiAuthMiddleware;
 use App\Middleware\ApiRateLimitMiddleware;
 use App\Controllers\BannerController;
@@ -99,6 +101,10 @@ return static function (Router $r): void {
     });
     $r->get('/api/docs/openapi.json', [ApiDocsController::class, 'spec'], 'api.docs.spec');
 
+    // PWA manifest + service worker (public — the app must be installable while logged out too)
+    $r->get('/manifest.webmanifest', [ManifestController::class, 'manifest'], 'pwa.manifest');
+    $r->get('/sw.js', [ManifestController::class, 'serviceWorker'], 'pwa.sw');
+
     // First-run installer (404s itself once storage/installed.lock exists)
     $r->get('/install', [InstallController::class, 'step'], 'install');
     $r->post('/install', [InstallController::class, 'step'], 'install.post');
@@ -138,6 +144,9 @@ return static function (Router $r): void {
         $r->post('/notifications/read', [NotificationController::class, 'markRead'], 'notifications.read');
         $r->post('/banners/{id}/dismiss', [BannerController::class, 'dismiss'], 'banners.dismiss');
         $r->post('/banners/{id}/ack', [BannerController::class, 'acknowledge'], 'banners.ack');
+        $r->get('/push/public-key', [PushController::class, 'publicKey'], 'push.public-key');
+        $r->post('/push/subscribe', [PushController::class, 'subscribe'], 'push.subscribe');
+        $r->post('/push/unsubscribe', [PushController::class, 'unsubscribe'], 'push.unsubscribe');
         $r->get('/qlicons/{file}', [MediaController::class, 'quickLinkIcon'], 'qlicon');
         $r->post('/quick-links/{id}/click', [QuickLinkController::class, 'click'], 'quick-links.click');
         $r->post('/quick-links/{id}/pin', [QuickLinkController::class, 'pin'], 'quick-links.pin');

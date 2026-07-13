@@ -38,3 +38,12 @@
         <button type="submit" class="btn btn-primary">Save preferences</button>
     </form>
 </div>
+
+<div class="card" style="max-width:640px;">
+    <h2>Push notifications</h2>
+    <p class="text-muted">Get notified even when this tab isn't open. Requires installing this app or allowing notifications in your browser.</p>
+    <label class="form-check">
+        <input type="checkbox" id="push-toggle">
+        Enable push notifications on this device
+    </label>
+</div>

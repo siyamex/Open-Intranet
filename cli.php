@@ -26,6 +26,7 @@ $commands = [
     'wiki:reminders' => \App\Console\WikiRemindersCommand::class,
     'forms:prune' => \App\Console\FormsPruneCommand::class,
     'ldap:sync' => \App\Console\LdapSyncCommand::class,
+    'vapid:generate' => \App\Console\VapidGenerateCommand::class,
 ];
 
 $name = $argv[1] ?? 'help';

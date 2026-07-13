@@ -8,7 +8,8 @@ $siteName = (string) Settings::get('site_name', config('app.name'));
 $themeMode = (string) user_pref('theme_mode', 'auto');
 ?>
 <!doctype html>
-<html lang="<?= e(Lang::locale()) ?>" dir="<?= e(Lang::dir()) ?>" data-theme-mode="<?= e(in_array($themeMode, ['auto', 'light', 'dark'], true) ? $themeMode : 'auto') ?>">
+<html lang="<?= e(Lang::locale()) ?>" dir="<?= e(Lang::dir()) ?>" data-theme-mode="<?= e(in_array($themeMode, ['auto', 'light', 'dark'], true) ? $themeMode : 'auto') ?>"
+      data-sw-url="<?= e(url('pwa.sw')) ?>" data-app-base="<?= e(rtrim((string) parse_url((string) config('app.url'), PHP_URL_PATH), '/')) ?>">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -34,6 +35,7 @@ $themeMode = (string) user_pref('theme_mode', 'auto');
 <script src="<?= e(asset('js/search-overlay.js')) ?>"></script>
 <script src="<?= e(asset('js/banners.js')) ?>"></script>
 <script src="<?= e(asset('js/lang-switch.js')) ?>"></script>
+<script src="<?= e(asset('js/pwa.js')) ?>"></script>
 <?= View::section('scripts') ?>
 </body>
 </html>
