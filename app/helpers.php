@@ -16,6 +16,14 @@ function e(string|int|float|null $value): string
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+/**
+ * Translate a lang key: __('nav.home'), __('dashboard.welcome', ['name' => 'Eva']).
+ */
+function __(string $key, array $params = []): string
+{
+    return \App\Core\Lang::get($key, $params);
+}
+
 function config(string $key, mixed $default = null): mixed
 {
     return Config::get($key, $default);

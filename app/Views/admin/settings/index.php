@@ -221,6 +221,30 @@ use App\Core\View;
         <button type="submit" class="btn btn-primary">Save directory settings</button>
     </form>
 
+<?php elseif ($tab === 'languages'): ?>
+    <form method="post" action="<?= e(url('admin.settings.save')) ?>">
+        <?= csrf_field() ?><input type="hidden" name="tab" value="languages">
+        <?php $langs = \App\Core\DB::fetchAll('SELECT * FROM languages ORDER BY name'); ?>
+        <div class="table-wrap">
+        <table class="table">
+            <thead><tr><th>Language</th><th>Native name</th><th>Direction</th><th>Active</th><th>Default</th></tr></thead>
+            <tbody>
+            <?php foreach ($langs as $lang): ?>
+            <tr>
+                <td><?= e((string) $lang['name']) ?></td>
+                <td><?= e((string) $lang['native_name']) ?></td>
+                <td><?= (int) $lang['is_rtl'] === 1 ? 'RTL' : 'LTR' ?></td>
+                <td><input type="checkbox" name="active[]" value="<?= e((string) $lang['code']) ?>" <?= (int) $lang['is_active'] === 1 ? 'checked' : '' ?>></td>
+                <td><input type="radio" name="default_locale" value="<?= e((string) $lang['code']) ?>" <?= (string) Settings::get('default_locale', 'en') === $lang['code'] ? 'checked' : '' ?>></td>
+            </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+        </div>
+        <p class="form-hint">Progress: string extraction is tracked in <code>docs/I18N.md</code>. Employees can also pick their own language from the avatar menu.</p>
+        <button type="submit" class="btn btn-primary" style="margin-top:0.75rem;">Save languages</button>
+    </form>
+
 <?php elseif ($tab === 'modules'): ?>
     <form method="post" action="<?= e(url('admin.settings.save')) ?>">
         <?= csrf_field() ?><input type="hidden" name="tab" value="modules">

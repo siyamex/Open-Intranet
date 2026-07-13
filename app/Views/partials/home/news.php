@@ -1,7 +1,7 @@
 <section class="home-section">
     <div class="home-section-head">
-        <h2><?= icon('news') ?> News</h2>
-        <a href="<?= e(url('news.index')) ?>">All news &rarr;</a>
+        <h2><?= icon('news') ?> <?= e(__('dashboard.news')) ?></h2>
+        <a href="<?= e(url('news.index')) ?>"><?= e(__('action.view_all')) ?> &rarr;</a>
     </div>
     <?php $all = array_merge($pinnedPosts, $newsPosts); ?>
     <?php if ($all === []): ?>

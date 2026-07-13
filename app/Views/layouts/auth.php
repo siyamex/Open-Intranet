@@ -6,7 +6,7 @@ $siteName = (string) Settings::get('site_name', config('app.name'));
 $logoPath = Settings::get('logo_path');
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="<?= e(\App\Core\Lang::locale()) ?>" dir="<?= e(\App\Core\Lang::dir()) ?>">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

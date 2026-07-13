@@ -1,6 +1,6 @@
 <section class="home-section">
     <div class="home-section-head">
-        <h2><?= icon('bolt') ?> Apps</h2>
+        <h2><?= icon('bolt') ?> <?= e(__('dashboard.apps')) ?></h2>
         <span class="text-muted" style="font-size:0.85rem;">Star favorites · drag to arrange</span>
     </div>
     <?php if ($quickLinks === []): ?>

@@ -16,7 +16,7 @@ use App\Core\View;
 
 final class SettingsController
 {
-    private const TABS = ['general', 'homepage', 'authentication', 'mail', 'uploads', 'directory', 'modules', 'advanced'];
+    private const TABS = ['general', 'homepage', 'authentication', 'mail', 'uploads', 'directory', 'languages', 'modules', 'advanced'];
 
     public function index(): void
     {
@@ -41,6 +41,7 @@ final class SettingsController
             'mail' => $this->saveMail(),
             'uploads' => $this->saveUploads(),
             'directory' => $this->saveDirectory(),
+            'languages' => $this->saveLanguages(),
             'modules' => $this->saveModules(),
             'advanced' => $this->saveAdvanced(),
             default => null,
@@ -131,6 +132,18 @@ final class SettingsController
         Settings::set('directory_searchable_fields', array_values(array_intersect((array) ($_POST['searchable'] ?? []), $searchKnown)), 'json');
         Settings::set('profile_self_editable', array_values(array_intersect((array) ($_POST['self_edit'] ?? []), $editKnown)), 'json');
         Settings::set('directory_chat_template', trim((string) ($_POST['chat_template'] ?? '')));
+    }
+
+    private function saveLanguages(): void
+    {
+        $active = array_map('strval', (array) ($_POST['active'] ?? []));
+        foreach (DB::fetchAll('SELECT code FROM languages') as $lang) {
+            DB::update('languages', ['is_active' => in_array($lang['code'], $active, true) ? 1 : 0], 'code = ?', [$lang['code']]);
+        }
+        $default = (string) ($_POST['default_locale'] ?? 'en');
+        if (in_array($default, $active, true)) {
+            Settings::set('default_locale', $default);
+        }
     }
 
     private function saveModules(): void

@@ -1,6 +1,6 @@
 <?php use App\Core\View; ?>
 <div class="page-head">
-    <h1>Welcome back, <?= e(explode(' ', trim((string) \App\Core\Auth::user()['name']))[0]) ?> 👋</h1>
+    <h1><?= e(__('dashboard.welcome', ['name' => explode(' ', trim((string) \App\Core\Auth::user()['name']))[0]])) ?> 👋</h1>
 </div>
 
 <?php foreach ($sections as $section): ?>

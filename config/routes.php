@@ -102,6 +102,7 @@ return static function (Router $r): void {
             $r->get('/search', [SearchController::class, 'index'], 'search');
         });
         $r->post('/prefs/theme-mode', [ProfileController::class, 'saveThemeMode'], 'prefs.theme-mode');
+        $r->post('/prefs/locale', [ProfileController::class, 'saveLocale'], 'prefs.locale');
         $r->get('/theme-preview', [AdminThemeController::class, 'preview'], 'theme.preview');
         $r->get('/notifications/recent', [NotificationController::class, 'recent'], 'notifications.recent');
         $r->post('/notifications/read', [NotificationController::class, 'markRead'], 'notifications.read');

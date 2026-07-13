@@ -136,6 +136,25 @@ final class ProfileController
     /**
      * Persist the navbar dark-mode preference (auto/light/dark).
      */
+    public function saveLocale(): void
+    {
+        $code = (string) ($_POST['locale'] ?? 'en');
+        $valid = DB::fetch('SELECT code FROM languages WHERE code = ? AND is_active = 1', [$code]) !== null;
+        if (!$valid) {
+            header('Content-Type: application/json');
+            echo json_encode(['ok' => false]);
+            exit;
+        }
+        DB::run(
+            "INSERT INTO user_prefs (user_id, `key`, `value`) VALUES (?, 'locale', ?)
+             ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)",
+            [Auth::id(), $code]
+        );
+        header('Content-Type: application/json');
+        echo json_encode(['ok' => true]);
+        exit;
+    }
+
     public function saveThemeMode(): void
     {
         $mode = (string) ($_POST['mode'] ?? 'auto');

@@ -4,6 +4,12 @@ use App\Models\MenuItem;
 
 $menuTree = MenuItem::tree('sidebar');
 $authUser = Auth::user();
+$navLabels = [
+    'Home' => __('nav.home'), 'Profile' => __('nav.profile'), 'Directory' => __('nav.directory'),
+    'Org Chart' => __('nav.org_chart'), 'News' => __('nav.news'), 'Documents' => __('nav.documents'),
+    'Events' => __('nav.events'), 'Wiki' => __('nav.wiki'), 'Requests' => __('nav.requests'), 'Kudos' => __('nav.kudos'),
+];
+$navLabel = static fn (string $label): string => $navLabels[$label] ?? $label;
 ?>
 <aside class="sidebar" id="sidebar">
     <nav class="sidebar-nav" aria-label="Main navigation">
@@ -13,7 +19,7 @@ $authUser = Auth::user();
                 <?php if ($item['children'] !== []): ?>
                     <button type="button" class="sidebar-link submenu-toggle <?= $item['is_active'] ? 'open' : '' ?>">
                         <?= icon((string) ($item['icon'] ?? 'link')) ?>
-                        <span class="sidebar-label"><?= e((string) $item['label']) ?></span>
+                        <span class="sidebar-label"><?= e($navLabel((string) $item['label'])) ?></span>
                         <?= icon('chevron-down', 'icon chevron') ?>
                     </button>
                     <ul class="sidebar-submenu" <?= $item['is_active'] ? '' : 'hidden' ?>>
@@ -21,7 +27,7 @@ $authUser = Auth::user();
                         <li class="<?= $child['is_active'] ? 'active' : '' ?>">
                             <a class="sidebar-link" href="<?= e((string) $child['resolved_url']) ?>" target="<?= e((string) $child['target']) ?>">
                                 <?= icon((string) ($child['icon'] ?? 'link')) ?>
-                                <span class="sidebar-label"><?= e((string) $child['label']) ?></span>
+                                <span class="sidebar-label"><?= e($navLabel((string) $child['label'])) ?></span>
                             </a>
                         </li>
                         <?php endforeach; ?>
@@ -29,7 +35,7 @@ $authUser = Auth::user();
                 <?php else: ?>
                     <a class="sidebar-link" href="<?= e((string) $item['resolved_url']) ?>" target="<?= e((string) $item['target']) ?>">
                         <?= icon((string) ($item['icon'] ?? 'link')) ?>
-                        <span class="sidebar-label"><?= e((string) $item['label']) ?></span>
+                        <span class="sidebar-label"><?= e($navLabel((string) $item['label'])) ?></span>
                     </a>
                 <?php endif; ?>
             </li>

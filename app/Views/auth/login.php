@@ -1,27 +1,27 @@
-<h2 class="auth-heading">Sign in</h2>
+<h2 class="auth-heading"><?= e(__('auth.sign_in')) ?></h2>
 
 <?php if ($allowLocal): ?>
 <form method="post" action="<?= e(url('login.post')) ?>" novalidate>
     <?= csrf_field() ?>
     <div class="form-group">
-        <label class="form-label" for="email">Email address</label>
+        <label class="form-label" for="email"><?= e(__('auth.email')) ?></label>
         <input class="form-control" type="email" id="email" name="email" value="<?= e((string) old('email')) ?>" required autofocus autocomplete="username">
     </div>
     <div class="form-group">
-        <label class="form-label" for="password">Password</label>
+        <label class="form-label" for="password"><?= e(__('auth.password')) ?></label>
         <input class="form-control" type="password" id="password" name="password" required autocomplete="current-password">
     </div>
     <div class="form-group form-check">
         <input type="checkbox" id="remember" name="remember" value="1">
-        <label for="remember">Remember me for 30 days</label>
+        <label for="remember"><?= e(__('auth.remember_me')) ?></label>
     </div>
-    <button type="submit" class="btn btn-primary btn-block">Sign in</button>
-    <p class="auth-links"><a href="<?= e(url('password.forgot')) ?>">Forgot your password?</a></p>
+    <button type="submit" class="btn btn-primary btn-block"><?= e(__('auth.sign_in')) ?></button>
+    <p class="auth-links"><a href="<?= e(url('password.forgot')) ?>"><?= e(__('auth.forgot_password')) ?></a></p>
 </form>
 <?php endif; ?>
 
 <?php if ($providers !== []): ?>
-    <?php if ($allowLocal): ?><div class="auth-divider">or continue with</div><?php endif; ?>
+    <?php if ($allowLocal): ?><div class="auth-divider"><?= e(__('auth.continue_with')) ?></div><?php endif; ?>
     <div class="sso-buttons">
         <?php foreach ($providers as $p): ?>
         <a class="btn btn-secondary btn-block sso-btn" href="<?= e(base_url('auth/' . $p['slug'] . '/redirect')) ?>"

@@ -52,7 +52,7 @@ final class AuthController
 
         if (LoginThrottle::tooMany($email, $ip)) {
             $minutes = LoginThrottle::minutesLeft($email, $ip);
-            flash('error', "Too many failed sign-in attempts. Please try again in about {$minutes} minute(s).");
+            flash('error', __('auth.too_many_attempts', ['minutes' => $minutes]));
             Flash::keepInput();
             redirect('login');
         }
@@ -78,7 +78,7 @@ final class AuthController
         if (!$valid) {
             LoginThrottle::record($email, $ip, false);
             Audit::log('auth.login_failed', 'user', null, ['email' => $email]);
-            flash('error', 'Invalid credentials.');
+            flash('error', __('auth.invalid_credentials'));
             Flash::keepInput();
             redirect('login');
         }
