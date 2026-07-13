@@ -45,7 +45,7 @@ final class InstallController
             $data['allOk'] = !in_array(false, array_column($data['checks'], 'ok'), true);
         }
         if ($step >= 3 && !$this->dbReady()) {
-            redirect(self::base() . '/install?step=2');
+            self::goto('/install?step=2');
         }
         if ($step === 3) {
             $data['pending'] = count(array_filter(Migrator::status(), static fn ($m) => $m['status'] === 'pending'));
@@ -86,7 +86,7 @@ final class InstallController
             $this->fail(2, 'Could not write .env — check directory permissions.');
         }
         Config::boot();
-        redirect(self::base() . '/install?step=3');
+        self::goto('/install?step=3');
     }
 
     private function runMigrations(): void
@@ -97,7 +97,7 @@ final class InstallController
         } catch (\Throwable $e) {
             $this->fail(3, 'Migration failed: ' . $e->getMessage());
         }
-        redirect(self::base() . '/install?step=4');
+        self::goto('/install?step=4');
     }
 
     private function createAdmin(): void
@@ -127,7 +127,7 @@ final class InstallController
         if ($roleId > 0) {
             DB::run('INSERT IGNORE INTO user_role (user_id, role_id) VALUES (?, ?)', [$userId, $roleId]);
         }
-        redirect(self::base() . '/install?step=5');
+        self::goto('/install?step=5');
     }
 
     private function finish(): void
@@ -139,7 +139,7 @@ final class InstallController
             Settings::set('timezone', $tz);
         }
         file_put_contents(BASE_PATH . '/storage/installed.lock', date('c'), LOCK_EX);
-        redirect(self::base() . '/login');
+        self::goto('/login');
     }
 
     // ---- helpers -------------------------------------------------------------
@@ -204,9 +204,20 @@ final class InstallController
         return rtrim($base, '/');
     }
 
+    /**
+     * Raw redirect using self::base() directly — the global redirect()
+     * helper also prepends base_url() (built from APP_URL), which would
+     * double the app path once .env exists from step 2 onward.
+     */
+    private static function goto(string $path): never
+    {
+        header('Location: ' . self::base() . $path, true, 302);
+        exit;
+    }
+
     private function fail(int $step, string $message): never
     {
         flash('error', $message);
-        redirect(self::base() . '/install?step=' . $step);
+        self::goto('/install?step=' . $step);
     }
 }
