@@ -63,6 +63,11 @@ final class AuthController
             && $user['password_hash'] !== null
             && password_verify($password, (string) $user['password_hash']);
 
+        // Optional LDAP-bind fallback for users provisioned/synced from AD
+        if (!$valid && $user !== null && $user['status'] === 'active' && !empty($user['ldap_dn'])) {
+            $valid = $this->tryLdapBind((string) $user['ldap_dn'], $password);
+        }
+
         if ($valid && !(bool) Settings::get('allow_local_login', true)) {
             // Local login disabled — super admins can never be locked out.
             $isSuperAdmin = DB::fetch(
@@ -100,6 +105,19 @@ final class AuthController
             redirect($intended);
         }
         redirect('/');
+    }
+
+    private function tryLdapBind(string $dn, string $password): bool
+    {
+        $config = DB::fetch('SELECT * FROM ldap_config WHERE enabled = 1 AND allow_ldap_bind_login = 1 LIMIT 1');
+        if ($config === null || $password === '') {
+            return false;
+        }
+        try {
+            return (new \App\Core\Ldap\LdapClient($config))->bindAs($dn, $password);
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
     public function logout(): void

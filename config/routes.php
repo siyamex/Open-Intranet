@@ -18,6 +18,7 @@ use App\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Controllers\Admin\EventController as AdminEventController;
 use App\Controllers\Admin\FormController as AdminFormController;
+use App\Controllers\Admin\LdapController;
 use App\Controllers\RequestController;
 use App\Controllers\Admin\KudosController as AdminKudosController;
 use App\Controllers\Admin\PollController as AdminPollController;
@@ -296,6 +297,13 @@ return static function (Router $r): void {
             $r->post('/documents/versions/{id}/restore', [AdminDocumentController::class, 'restore'], 'admin.documents.restore');
             $r->post('/doc-categories', [AdminDocumentController::class, 'storeCategory'], 'admin.doc-categories.store');
             $r->delete('/doc-categories/{id}', [AdminDocumentController::class, 'destroyCategory'], 'admin.doc-categories.destroy');
+        });
+
+        $r->group(['middleware' => [PermissionMiddleware::class . ':ldap.manage']], static function (Router $r): void {
+            $r->get('/ldap', [LdapController::class, 'index'], 'admin.ldap');
+            $r->post('/ldap', [LdapController::class, 'save'], 'admin.ldap.save');
+            $r->get('/ldap/test', [LdapController::class, 'test'], 'admin.ldap.test');
+            $r->post('/ldap/sync', [LdapController::class, 'sync'], 'admin.ldap.sync');
         });
 
         $r->group(['middleware' => [PermissionMiddleware::class . ':forms.manage']], static function (Router $r): void {

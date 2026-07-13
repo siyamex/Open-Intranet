@@ -25,6 +25,7 @@ $commands = [
     'digest:send' => \App\Console\DigestSendCommand::class,
     'wiki:reminders' => \App\Console\WikiRemindersCommand::class,
     'forms:prune' => \App\Console\FormsPruneCommand::class,
+    'ldap:sync' => \App\Console\LdapSyncCommand::class,
 ];
 
 $name = $argv[1] ?? 'help';
